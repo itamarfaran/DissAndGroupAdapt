@@ -39,7 +39,7 @@ rsconnect/
 # Other
 *.lyx~
 *.lyx#
-*.csv
+*.dta
 *.ppt
 *.pptx
 *.doc
