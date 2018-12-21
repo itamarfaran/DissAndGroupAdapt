@@ -45,3 +45,4 @@ rsconnect/
 *.doc
 *.docx
 *.pdf
+.Rproj.user
