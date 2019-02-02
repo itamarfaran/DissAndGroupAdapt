@@ -13,9 +13,15 @@ https://www.jstor.org/stable/2345840
 ### Logistic Regression on Markov Chains for Crop Rotation Modelling
 https://pdfs.semanticscholar.org/6459/8587c36adf3e6eb728c25725f651df8dbf88.pdf
 
+### On the usage of the geepack
+https://cran.r-project.org/web/packages/geepack/vignettes/geepack-manual.pdf
+
 ### Parameter Estimation in Logistic Regression for Transition, Reverse Transition and Repeated Transition from Repeated Outcomes
 https://pdfs.semanticscholar.org/8096/dbbf760655b9aed7fab0ed9127347d214fcd.pdf
 
 ### Package ‘geepack’ @ cran
 ### Package ‘markovchain’ @ cran
 ### Package ‘msm’ @ cran
+
+### The R Package geepack for Generalized Estimating Equations
+https://www.jstatsoft.org/article/view/v015i02
