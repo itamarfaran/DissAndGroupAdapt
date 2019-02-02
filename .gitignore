@@ -40,8 +40,10 @@ rsconnect/
 *.lyx~
 *.lyx#
 *.dta
+*.csv
 *.ppt
 *.pptx
 *.doc
 *.docx
 *.pdf
+.Rproj.user
