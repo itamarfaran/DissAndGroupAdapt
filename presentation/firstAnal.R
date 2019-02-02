@@ -1,7 +1,6 @@
-source("baseFunctions.R")
-ipak(c("readr", "tidyverse", "data.table", "dtplyr", "pracma", "lme4"))
+source("code/00_baseFunctions.R")
 
-testData <- fread("Data/decision_making_experiment.csv")
+testData <- fread("data/decision_making_experiment.csv")
 str(testData)
 
 testData[,subnum := createID(subnum)]
@@ -69,5 +68,9 @@ tmp[,mean(V1), keyby = .(cond, lag)] %>% ggplot(aes(x = lag, y = V1, col = cond)
 plot_autocor(5)
 
 glm(iscorrInd ~ (round + (round > 60))*cond, testData, family = binomial(link = "logit")) %>% summary()
-mod <- glmer(iscorrInd ~ (round + (round > 60))*cond + (1|group_num), testData, family = binomial(link = "logit"))
-summary(mod)
+# mod <- glmer(iscorrInd ~ (round + (round > 60))*cond + (1|group_num), testData, family = binomial(link = "logit"))
+# summary(mod)
+
+X <- data.frame(Round = 1:100, Right = c(rep(0.9, 60), rep(0.5, 40)), Left = 0.7) %>% gather(key = Button, value = Probability, -Round)
+ggplot(X, aes(x = Round, y = Probability, col = Button)) + geom_line(size = 1) + geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
+  theme(legend.position = "bottom") + scale_y_continuous(breaks = 0:10/10, labels = 0:10/10) + ggtitle("Probability of Higher Gain")
