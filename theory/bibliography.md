@@ -1,11 +1,18 @@
 ### A LOGISTIC REGRESSION AND MARKOV CHAIN MODEL FOR THE PREDICTION OF NATION-STATE VIOLENT CONFLICTS AND TRANSITIONS
 https://apps.dtic.mil/dtic/tr/fulltext/u2/1028633.pdf
 
+### Analysis of Longitudinal Data, P.J. Diggle et al., 2nd edition
+Chapter 7: Generalized Linear Models for Longitudinal Data
+Chapter 10: Transition Models
+
 ### Covariance Models for Clustered Data
 http://courses.washington.edu/b571/lectures/set3.pdf
 
 ### GEE: choosing proper working correlation structure
 https://stats.stackexchange.com/questions/83577/gee-choosing-proper-working-correlation-structure
+
+### geepack manual
+https://cran.r-project.org/web/packages/geepack/vignettes/geepack-manual.pdf
 
 ### Generalized Linear Models with Varying Dispersion
 https://www.jstor.org/stable/2345840
@@ -22,6 +29,9 @@ https://pdfs.semanticscholar.org/8096/dbbf760655b9aed7fab0ed9127347d214fcd.pdf
 ### Package ‘geepack’ @ cran
 ### Package ‘markovchain’ @ cran
 ### Package ‘msm’ @ cran
+
+### Prof. D. Zucker's notes on GEE
+Ask me for the notes
 
 ### The R Package geepack for Generalized Estimating Equations
 https://www.jstatsoft.org/article/view/v015i02

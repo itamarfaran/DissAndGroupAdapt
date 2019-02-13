@@ -13,6 +13,7 @@ testData[, `:=` (subnum = createID(subnum, F), # Create ID numbers for subjects
                  finaldecision = factor(finaldecision), # Factor group choices
                  # logreaction = log(reaction), # Define log(time) for further anlysis if needed
                  finaldec = as.integer(finaldec - 1))] # Factorize group final decision as 0 / 1
+testData[reaction <= 0, reaction := NA] # Rounds with non-positive time are NA
 
 testData[round <= 60, `:=` (iscorrectInd = 1*(individualcoice == 1), 
                             iscorrectGr = 1*(finaldec == 1))] # t<=60, the right choise is 1
@@ -45,16 +46,22 @@ testData2[, `:=` (afterShock = 1*(round > 60), # Remove unneeded columns
                   foregone = NULL,
                   reaction = NULL)]
 
+testData3 <- copy(testData2)
+# testData3[,`:=` (roundbefore = round*(round <= 60),
+#                  roundafter = round*(round > 60),
+#                  round = NULL)]
 
 
 
-genZcor(clusz = table(testData2$subnum), waves = testData2$round, corstrv = 3)
-genZcor(clusz = table(testData2$group_num), waves = testData2$subnum, corstrv = 2)
-
-mod1 <- geeglm(iscorrectInd ~ round*afterShock*cond, family = binomial(link = "logit"), data = testData2,
-              id = testData2$subnum, waves = round, corstr = "ar1")
-# mod2 <- geese(iscorrectInd ~ round*afterShock*cond, family = binomial(link = "logit"), data = testData2,
-#               id = testData2$subnum, waves = round, corstr = "ar1")
-
-summary(mod1)
-summary(mod2)
+# testData2[group_num == 78, iscorrectInd, by = subnum]
+# 
+# genZcor(clusz = table(testData2$subnum), waves = testData2$round, corstrv = 3)
+# genZcor(clusz = table(testData2$group_num), waves = testData2$subnum, corstrv = 2)
+# 
+# mod1 <- geeglm(iscorrectInd ~ round*afterShock*cond, family = binomial(link = "logit"), data = testData2,
+#               id = interaction(subnum, group_num), corstr = "ar1")
+# # mod2 <- geese(iscorrectInd ~ round*afterShock*cond, family = binomial(link = "logit"), data = testData2,
+# #               id = interaction(subnum, group_num), waves = round, corstr = "ar1")
+# 
+# summary(mod1)
+# summary(mod2)

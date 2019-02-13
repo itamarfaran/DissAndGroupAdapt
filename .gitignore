@@ -43,7 +43,9 @@ rsconnect/
 *.csv
 *.ppt
 *.pptx
+*.gslides
 *.doc
 *.docx
 *.pdf
 .Rproj.user
+*.ini
