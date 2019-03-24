@@ -96,16 +96,29 @@ B_sample_groups <- 100
 B_bootstrap <- 1000
 
 testData3 <- prepare_data(testData2[,.(round, subnum, group_num, cond, iscorrectInd)])
-real_res <- colMeans(t(sapply(1:B_sample_groups, function(b) sample_from_groups(testData3, 60))))
+real_res <- colMeans(do.call(rbind,
+                             parallel::mclapply(X = 1:B_sample_groups,
+                                                FUN = function(b) sample_from_groups(testData3, 60),
+                                                mc.cores =
+                                                  ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
+                    )))
+
 
 boot_res <- do.call(rbind, 
                     parallel::mclapply(X = 1:B_bootstrap,
-                                       FUN = function(k) reassign_groups_and_cond(testData2, rounds, 1),
+                                       FUN = function(k) reassign_groups_and_cond(testData2, rounds, B_sample_groups),
                                        mc.cores = 
                                          ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
                                        ))
 
 pvals <- sapply(1:3, function(i) mean(abs(boot_res[,i]) > abs(real_res[i])))
 p.adjust(pvals, method = "BH")
+
+link <- paste0("Data/permute_run_", Sys.time(), ".RData")
+link <- gsub(":", "-", link)
+link <- gsub(" ", "_", link)
+save.image(link)
 ###
+
+
 

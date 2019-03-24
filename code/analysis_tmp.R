@@ -1,6 +1,6 @@
 source("code/00_baseFunctions.R")
 
-testData <- fread("data/decision_making_experiment.csv")
+testData <- fread("Data/decision_making_experiment.csv")
 str(testData)
 
 testData[, `:=` (subnum = createID(subnum, F), # Create ID numbers for subjects
