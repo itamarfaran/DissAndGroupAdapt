@@ -1,0 +1,868 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation 0bp
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Dissent and Group Adaptability
+\begin_inset Newline newline
+\end_inset
+
+52841 Laboratory in Statistical Consulting
+\end_layout
+
+\begin_layout Author
+Itamar Faran & Yuval Berger-Bar
+\begin_inset Newline newline
+\end_inset
+
+Insructor: Micha Mendel
+\begin_inset Newline newline
+\end_inset
+
+The Department of Statistics
+\begin_inset Newline newline
+\end_inset
+
+The Hebrew University
+\end_layout
+
+\begin_layout Section
+Problem Definition
+\end_layout
+
+\begin_layout Subsection
+Definition of the Game
+\end_layout
+
+\begin_layout Standard
+Each round, a subject had to choose one of two buttons, each button with
+ a reward which is unkown until the subject chooses which button to play.
+ The possible rewards from a button are either 
+\begin_inset Formula $+7$
+\end_inset
+
+ or 
+\begin_inset Formula $-5$
+\end_inset
+
+.
+ Up until round 60, one of the buttons had 
+\begin_inset Formula $P\left(Reward=7\right)=0.9$
+\end_inset
+
+ with 
+\begin_inset Formula $E\left[Reward\right]=5.8$
+\end_inset
+
+ and the other had 
+\begin_inset Formula $P\left(Reward=7\right)=0.7$
+\end_inset
+
+ with 
+\begin_inset Formula $E\left[Reward\right]=3.4$
+\end_inset
+
+.
+ After round 60, the former button's probabilty fell to 
+\begin_inset Formula $P\left(Reward=7\right)=0.5$
+\end_inset
+
+ with 
+\begin_inset Formula $E\left[Reward\right]=1$
+\end_inset
+
+.
+ For simplicity, we will assume that that button is on the right.
+\end_layout
+
+\begin_layout Standard
+Both buttons are 
+\bar under
+independet
+\bar default
+, meaning there are games where both have +7 or both have -5; Each button
+ is an independent Bernoulli RV.
+ After choosing a button, users are revealed to both results - they know
+ what is the reward of the button they chose and what is the reward of the
+ other button.
+\end_layout
+
+\begin_layout Standard
+To conclude, up until round 60, the right button had a higher expected reward
+ than the left one; in round 61 the left button had higher expected reward.
+ We will reffer to the button with higher reward as the correct button,
+ e.g:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Correct=\begin{cases}
+Right & t\leq60\\
+Left & t>60
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We are interested in the probability of choosing the correct button.
+\end_layout
+
+\begin_layout Standard
+
+\bar under
+Important note:
+\bar default
+ The users actually received the rewards the gained, e.g.
+ they played on real money and had a true incentive to choose the right
+ button.
+\end_layout
+
+\begin_layout Subsection
+Groups
+\end_layout
+
+\begin_layout Standard
+Each subject played 100 rounds of this game.
+ The expirement had 210 subjects divided in the following way:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Individuals
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Non-Fine Groups
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Fine Groups
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# Subjects
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+90
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+90
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# Groups
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+30
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+# Subject per Group
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+The Individuals
+\series default
+ played the game by themselves.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+The Non-Fine Groups
+\series default
+ were groups of 3 individuals, each of them chose a button and the group's
+ choice was the majority vote.
+ Each round, the subjects can see which button the group chose (thus they
+ can know if they were in the majority or not) and what was the reward of
+ each button (so they know if they chose the correct button and if the group
+ chose the correct button).
+ Each individual received the reward the group chose.
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+The Fine Groups
+\series default
+ were groups of 3 individuals, similiar to the Non-Fine Groups, only that
+ subjects in the minority where fined - if a subject was in the minority
+ of the group, he had to pay 2 units that were given to the majority (each
+ recieved 1 unit).
+ For example; Say 2 out of 3 chose the correct button, then the group's
+ choice is the correct button.
+ However, the 3rd player was in minority, so his reward is +5 while the
+ others had a reward of +8.
+ This adds an intent to be in the majority of the group.
+\end_layout
+
+\begin_layout Standard
+Subjects where assigned to groups without an option to communicate; They
+ only knew they are in a group of 3, but didn't knew with who they are playing.
+ 
+\end_layout
+
+\begin_layout Standard
+Our question of interest is: Did the different groups managed the shock
+ at round 60 differently?
+\end_layout
+
+\begin_layout Section
+Definitions and Statistical Modeling
+\end_layout
+
+\begin_layout Subsection
+Model Definition
+\end_layout
+
+\begin_layout Standard
+Define 
+\begin_inset Formula $Y_{ijt}\in\left\{ 0,1\right\} $
+\end_inset
+
+ where 
+\begin_inset Formula $i$
+\end_inset
+
+ represents group, 
+\begin_inset Formula $j$
+\end_inset
+
+ represents individual and 
+\begin_inset Formula $t$
+\end_inset
+
+ represents round number.
+ 
+\begin_inset Formula $Y_{ijt}$
+\end_inset
+
+ is equal to 1 when 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\xout off
+\uuline off
+\uwave off
+\noun off
+\color none
+subject 
+\begin_inset Formula $j$
+\end_inset
+
+ in group 
+\begin_inset Formula $i$
+\end_inset
+
+ chose correct option at round 
+\begin_inset Formula $t$
+\end_inset
+
+ and 0 elsewise.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $t\in\left\{ 1,...,100\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $G\in\left\{ 1,2,3\right\} $
+\end_inset
+
+ where:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+G=1 & \iff Individual\\
+G=2 & \iff Non-Fine\:Group\\
+G=3 & \iff Fine\:Group
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We are trying to model the qunatity 
+\begin_inset Formula $P\left(Y_{ijt}=1|t,G\right)$
+\end_inset
+
+ where the relationship between 
+\begin_inset Formula $Y,t$
+\end_inset
+
+ is positive and sub-linear.
+ Also, we want to allow the slope to vary between group-types and before
+ and after 
+\begin_inset Formula $t=60$
+\end_inset
+
+.
+ This results with 12 explanatory variables: Each group has an intercept
+ and slope before and after 
+\begin_inset Formula $t=60$
+\end_inset
+
+.
+ In numbers:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+logit\left(P\left(Y_{ijt}=1|t,G\right)\right)=\begin{cases}
+\beta_{0,before}^{\left(g\right)}+\beta_{1,before}^{\left(g\right)}\cdot h\left(t\right) & t\leq60\\
+\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot h\left(t\right) & t>60
+\end{cases}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula $G\in\left\{ 1,2,3\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $h$
+\end_inset
+
+ is some sub-linear function.
+ Then, it follows that
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+P\left(Y_{ijt}=1|G=g,t=61\right) & =\frac{e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}\\
+P\left(Y_{ijt}=0|G=g,t=61\right) & =\frac{1}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The odds is defined by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{P\left(Y=1|G=g,t=61\right)}{P\left(Y=0|G=g,t=61\right)}=\exp\left[\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and we can define the odds ratio between time 61 and 60 as
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\frac{\frac{P\left(Y=1|G=g,t=61\right)}{P\left(Y=0|G=g,t=61\right)}}{\frac{P\left(Y=1|G=g,t=60\right)}{P\left(Y=0|G=g,t=60\right)}}=\frac{e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}{e^{\beta_{0,before}^{\left(g\right)}+\beta_{1,before}^{\left(g\right)}\cdot60}}=\exp\left[\beta_{0,after}^{\left(g\right)}-\beta_{0,before}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61-\beta_{1,before}^{\left(g\right)}\cdot60\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Finally, the log-odds-ratio of group 
+\begin_inset Formula $g$
+\end_inset
+
+ is given by:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\gamma_{g}=\beta_{0,after}^{\left(g\right)}-\beta_{0,before}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61-\beta_{1,before}^{\left(g\right)}\cdot60
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and we are interested in the following hypothesis testing:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+H_{0}: & \gamma_{1}=\gamma_{2}=\gamma_{3}\\
+H_{1}: & else
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Once the model is built, this inference is rather simple, since:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\hat{\beta}\rightsquigarrow N\left(\beta,-\nabla^{2}\ell^{-1}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and 
+\begin_inset Formula $\hat{\gamma}_{g}$
+\end_inset
+
+ = 
+\begin_inset Formula $C_{g}\hat{\beta}$
+\end_inset
+
+ is a linear function of normal RVs.
+ So, given the model we can conduct this hypothesis testing at once.
+ The problem is specifing 
+\begin_inset Formula $-\nabla^{2}\ell^{-1}$
+\end_inset
+
+ correctly.
+\end_layout
+
+\begin_layout Subsection
+Correlation Structures
+\end_layout
+
+\begin_layout Standard
+Estimating the model above while assuming independence across all observations
+ is a simple logistic regression.
+ However, exploratory analysis and simple logic shows that the observations
+ 
+\bar under
+are not
+\bar default
+ independent.
+\end_layout
+
+\begin_layout Standard
+First of all,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Y_{ij,t}\cancel{\bot}Y_{ij,t-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The inner-subject dependency can be modeled as an ARMA process with 
+\begin_inset Formula $1\leq p,q\leq3$
+\end_inset
+
+, e.g.
+ the probabilty of choosing the correct button at time 
+\begin_inset Formula $t$
+\end_inset
+
+ changes if we know what happend at time 
+\begin_inset Formula $t-1$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Furthermore, subjects which played in groups are cross-correlated among
+ themselves:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Corr\left(Y_{ijt},Y_{ikt}\right)\neq0
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Even if we assume that there is no partial correlation between 
+\begin_inset Formula $Y_{ij,t},Y_{ik,t-1}$
+\end_inset
+
+, it follows that all observation in 
+\begin_inset Formula $Y_{i}$
+\end_inset
+
+ are correlated:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+\left(1\right) & Corr\left(Y_{ijt},Y_{ikt}\right)\neq0\\
+\left(2\right) & Corr\left(Y_{ijt},Y_{ij,t-s}\right)\neq0\\
+\Rightarrow & Corr\left(Y_{ij,t-s},Y_{ikt}\right)\neq0
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+g\left(E\left[Y_{ijt}|b_{it},Y_{ij,t-1}\right]\right)=\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi Y_{ij,t-1}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+E\left[Y_{ijt}\right]=E\left[E\left[Y_{ijt}|b_{it},Y_{ij,t-1}\right]\right] & =E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi Y_{ij,t-1}\right)\right]\\
+ & =E\left[E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi Y_{ij,t-1}\right)|Y_{ij,t-1}\right]\right]\\
+ & =E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi\right)\right]\cdot P\left(Y_{ij,t-1}=1\right)+E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}\right)\right]\cdot P\left(Y_{ij,t-1}=0\right)
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+E\left[\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Cov\left(Y_{ijt},Y_{kls}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So, assuming 
+\begin_inset Formula $Y_{ij,t}$
+\end_inset
+
+ follows an 
+\begin_inset Formula $AR\left(1\right)$
+\end_inset
+
+ process, our correlation structure of 
+\begin_inset Formula $Y$
+\end_inset
+
+ is as follows:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+Corr\left(Y_{ijt},Y_{kls}\right) & =0\:\forall\:i\neq k\\
+Corr\left(Y_{ijt},Y_{ikt}\right) & =\rho_{g}\\
+Corr\left(Y_{ijt},Y_{ij,t-s}\right) & =\phi_{g}^{\left|s\right|}
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In matrix form:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+Corr\left(Y_{i}\right)=\left(\begin{array}{cccccccc}
+1 & \phi_{g} & \phi_{g}^{2} & \phi_{g}^{3} & \rho_{g} & 0 & 0 & 0\\
+\phi_{g} & 1 & \phi_{g} & \phi_{g}^{2} & 0 & \rho_{g} & 0 & 0\\
+\phi_{g}^{2} & \phi_{g} & 1 & \phi_{g} & 0 & 0 & \rho_{g} & 0\\
+\phi_{g}^{3} & \phi_{g}^{2} & \phi_{g} & 1 & 0 & 0 & 0 & \rho_{g}\\
+\rho_{g} & 0 & 0 & 0 & 1 & \phi_{g} & \phi_{g}^{2} & \phi_{g}^{3}\\
+0 & \rho_{g} & 0 & 0 & \phi_{g} & 1 & \phi_{g} & \phi_{g}^{2}\\
+0 & 0 & \rho_{g} & 0 & \phi_{g}^{2} & \phi_{g} & 1 & \phi_{g}\\
+0 & 0 & 0 & \rho_{g} & \phi_{g}^{3} & \phi_{g}^{2} & \phi_{g} & 1
+\end{array}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+logit\left(Y_{ijt}\right)=\beta_{0,t}^{\left(g\right)}+\beta_{1,t}^{\left(g\right)}\cdot h\left(t\right)+b_{it}^{\left(g\right)}+k\left(Y_{ij,t-1}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
