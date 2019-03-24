@@ -23,16 +23,14 @@ prepare_data <- function(dt){
   )]
   return(dt_new)
 }
-# dt <- testData3
-# round <- 60
 sample_from_groups <- function(dt, round){
   if(length(round) == 1) round <- rep(round, 2)
   
   group_num_indexes <- copy(
     unique(dt[,.(subnum, group_num)])[
-      ,.(sub1 = round(Rfast::nth(subnum, 1, descending = T)),
-         sub2 = round(Rfast::nth(subnum, 2, descending = T)),
-         sub3 = round(Rfast::nth(subnum, 3, descending = T))),
+      ,.(sub1 = round(nlargest(subnum, 1)),
+         sub2 = round(nlargest(subnum, 2)),
+         sub3 = round(nlargest(subnum, 3))),
       by = group_num])
   group_num_indexes[sub2 == 0 | sub3 == 0,`:=` (sub2 = sub1, sub3 = sub1)]
   

@@ -4,7 +4,8 @@ ipak <- function(pkg){
     install.packages(new.pkg, dependencies = TRUE)
   sapply(pkg, require, character.only = TRUE)
 }
-ipak(c("Rfast", "parallel", "readr", "tidyverse", "corrplot", "data.table", "dtplyr", "pracma", "geepack", "msm", "markovchain", "lme4", "glmmTMB"))
+ipak(c("parallel", "readr", "tidyverse", "data.table", "dtplyr", "pracma", "geepack"))
+# ipak(c("corrplot", "msm", "markovchain", "lme4", "glmmTMB"))
 
 createID <- function(x, factor = TRUE){
   x <- factor(x)
@@ -23,3 +24,9 @@ makeAllNumeric <- function(df){
 }
 
 auto_cor <- Vectorize(function(x, lag) cor(x[1:(length(x) - lag)], x[(1 + lag):length(x)]), "lag")
+
+nlargest <- function(x, k){
+  n <- length(x)
+  if(k > n) return(max(x))
+  return(sort(x)[k])
+}
