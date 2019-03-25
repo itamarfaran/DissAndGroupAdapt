@@ -103,16 +103,19 @@ real_res <- colMeans(do.call(rbind,
                                                   ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
                     )))
 
-
+tt <- Sys.time()
 boot_res <- do.call(rbind, 
                     parallel::mclapply(X = 1:B_bootstrap,
                                        FUN = function(k) reassign_groups_and_cond(testData2, rounds, B_sample_groups),
                                        mc.cores = 
                                          ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
                                        ))
+tt <- Sys.time() - tt
 
 pvals <- sapply(1:3, function(i) mean(abs(boot_res[,i]) > abs(real_res[i])))
+names(pvals) <- names(real_res)
 p.adjust(pvals, method = "BH")
+tt
 
 link <- paste0("Data/permute_run_", Sys.time(), ".RData")
 link <- gsub(":", "-", link)
