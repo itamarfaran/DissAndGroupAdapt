@@ -27,6 +27,6 @@ auto_cor <- Vectorize(function(x, lag) cor(x[1:(length(x) - lag)], x[(1 + lag):l
 
 nlargest <- function(x, k){
   n <- length(x)
-  if(k > n) return(max(x))
-  return(sort(x)[k])
+  if(k > n) return(min(x))
+  return(sort(x, decreasing = TRUE)[k])
 }
