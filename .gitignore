@@ -49,3 +49,4 @@ rsconnect/
 *.pdf
 .Rproj.user
 *.ini
+*.zip
