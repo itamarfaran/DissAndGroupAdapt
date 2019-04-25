@@ -67,3 +67,49 @@ for(k in 1:length(unique_groupnum)) for(i in 1:100){
 
 corrplot::corrplot(corr_matrix[50:150, 50:150])
 dt
+
+X3 <- testData2[,.( group_num, subnum, 
+                    indBeforeInter = (cond == "individual")*(round <= 60),
+                    fineBeforeInter = (cond == "fine")*(round <= 60),
+                    nfineBeforeInter = (cond == "nonfine")*(round <= 60),
+                    indAfterInter = (cond == "individual")*(round > 60),
+                    fineAfterInter = (cond == "fine")*(round > 60),
+                    nfineAfterInter = (cond == "nonfine")*(round > 60),
+                    indBeforeSlope = (cond == "individual")*log(round)*(round <= 60),
+                    fineBeforeSlope = (cond == "fine")*log(round)*(round <= 60),
+                    nfineBeforeSlope = (cond == "nonfine")*log(round)*(round <= 60),
+                    indAfterSlope = (cond == "individual")*log(round)*(round > 60),
+                    fineAfterSlope = (cond == "fine")*log(round)*(round > 60),
+                    nfineAfterSlope = (cond == "nonfine")*log(round)*(round > 60),
+                    iscorrectInd)]
+
+gee.subnums <- geeglm(iscorrectInd ~ 0 + indBeforeInter + fineBeforeInter + nfineBeforeInter +
+                        indAfterInter + fineAfterInter + nfineAfterInter +
+                        indBeforeSlope + fineBeforeSlope + nfineBeforeSlope +
+                        indAfterSlope + fineAfterSlope + nfineAfterSlope,
+                      family = binomial(link = "logit"),
+                      data = X3, id = subnum, corstr = "ar1")
+
+vcovv <- summary(gee.subnums)$cov.scaled
+coeffs <- gee.subnums$coefficients
+C1 <- rbind(c(-1, 0, 0, 1, 0, 0, -log(60), 0, 0, log(61), 0, 0),
+            c(0, -1, 0, 0, 1, 0, 0, -log(60), 0, 0, log(61), 0),
+            c(0, 0, -1, 0, 0, 1, 0, 0, -log(60), 0, 0, log(61)))
+rownames(C1) <- c("ind", "fine", "nfine")
+gamma <- C1 %*% coeffs
+vargamma <- C1 %*% vcovv %*% t(C1)
+
+C2 <- rbind(c(1, -1, 0),
+            c(1, 0, -1),
+            c(0, 1, -1))
+rownames(C2) <- c("ind-fine", "ind-nfine", "fine-nfine")
+
+diff <- C2 %*% gamma
+vardiff <- C2 %*% vargamma %*% t(C2)
+Zval <- diff/sqrt(diag(vardiff))
+Pval <- 2*pnorm(abs(Zval), lower.tail = F)
+
+results3 <- list(data = X1, model = mod.gee.ur, vcov = vcovv, coeffs = coeffs, C1 = C1, gamma = gamma, vargamma = vargamma,
+                 diff = diff, vardiff = vardiff, Zval = Zval, Pval = Pval)
+
+p.adjust(results3$Pval, "BH")

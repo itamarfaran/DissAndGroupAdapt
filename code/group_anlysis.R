@@ -1,7 +1,7 @@
 source("code/00_baseFunctions.R")
 source("code/analysis_tmp.R")
 
-testData3 <- unique(testData2[,.(round, group_num, cond, iscorrectGr)])
+testData3 <- unique(testData2[,.(round, loground = log(round), group_num, cond, iscorrectGr)])
 X1 <- testData3[,.( group_num,
                     indBeforeInter = (cond == "individual")*(round <= 60),
                     fineBeforeInter = (cond == "fine")*(round <= 60),
@@ -9,12 +9,12 @@ X1 <- testData3[,.( group_num,
                     indAfterInter = (cond == "individual")*(round > 60),
                     fineAfterInter = (cond == "fine")*(round > 60),
                     nfineAfterInter = (cond == "nonfine")*(round > 60),
-                    indBeforeSlope = (cond == "individual")*round*(round <= 60),
-                    fineBeforeSlope = (cond == "fine")*round*(round <= 60),
-                    nfineBeforeSlope = (cond == "nonfine")*round*(round <= 60),
-                    indAfterSlope = (cond == "individual")*round*(round > 60),
-                    fineAfterSlope = (cond == "fine")*round*(round > 60),
-                    nfineAfterSlope = (cond == "nonfine")*round*(round > 60),
+                    indBeforeSlope = (cond == "individual")*loground*(round <= 60),
+                    fineBeforeSlope = (cond == "fine")*loground*(round <= 60),
+                    nfineBeforeSlope = (cond == "nonfine")*loground*(round <= 60),
+                    indAfterSlope = (cond == "individual")*loground*(round > 60),
+                    fineAfterSlope = (cond == "fine")*loground*(round > 60),
+                    nfineAfterSlope = (cond == "nonfine")*loground*(round > 60),
                     iscorrectGr)]
 
 mod.gee.ur <- geeglm(iscorrectGr ~ 0 + indBeforeInter + fineBeforeInter + nfineBeforeInter +
@@ -43,10 +43,10 @@ X2 <- testData3[,.( group_num,
                     nfineBeforeInter = (cond != "fine")*(round <= 60),
                     fineAfterInter = (cond == "fine")*(round > 60),
                     nfineAfterInter = (cond != "fine")*(round > 60),
-                    fineBeforeSlope = (cond == "fine")*round*(round <= 60),
-                    nfineBeforeSlope = (cond != "fine")*round*(round <= 60),
-                    fineAfterSlope = (cond == "fine")*round*(round > 60),
-                    nfineAfterSlope = (cond != "fine")*round*(round > 60),
+                    fineBeforeSlope = (cond == "fine")*loground*(round <= 60),
+                    nfineBeforeSlope = (cond != "fine")*loground*(round <= 60),
+                    fineAfterSlope = (cond == "fine")*loground*(round > 60),
+                    nfineAfterSlope = (cond != "fine")*loground*(round > 60),
                     iscorrectGr)]
 
 mod.gee.r <- geeglm(iscorrectGr ~ 0 + fineBeforeInter + nfineBeforeInter + fineAfterInter + nfineAfterInter +
@@ -62,7 +62,7 @@ testData3[,`:=` (pred.gee.r = predict(mod.gee.r, type = "response"),
                  res.gee.r = resid(mod.gee.r, type = "response"),
                  pred.glm.r = predict(mod.glm.r, type = "response"),
                  res.glm.r = resid(mod.glm.r, type = "response")
-)]
+                 )]
 
 
 anova_gee <- anova(mod.gee.r, mod.gee.ur)
@@ -70,14 +70,15 @@ anova_gee
 
 anova_glm <- anova(mod.glm.r, mod.glm.ur)
 anova_glm
+pchisq(anova_glm$Deviance[2], anova_glm$Df[2], lower.tail = F)
 
 # The data suggests that there is no big defference between individuals and non-fine groups.
 
 vcovv <- summary(mod.gee.ur)$cov.scaled
 coeffs <- mod.gee.ur$coefficients
-C1 <- rbind(c(-1, 0, 0, 1, 0, 0, -60, 0, 0, 61, 0, 0),
-            c(0, -1, 0, 0, 1, 0, 0, -60, 0, 0, 61, 0),
-            c(0, 0, -1, 0, 0, 1, 0, 0, -60, 0, 0, 61))
+C1 <- rbind(c(-1, 0, 0, 1, 0, 0, -log(60), 0, 0, log(61), 0, 0),
+            c(0, -1, 0, 0, 1, 0, 0, -log(60), 0, 0, log(61), 0),
+            c(0, 0, -1, 0, 0, 1, 0, 0, -log(60), 0, 0, log(61)))
 rownames(C1) <- c("ind", "fine", "nfine")
 gamma <- C1 %*% coeffs
 vargamma <- C1 %*% vcovv %*% t(C1)
@@ -99,8 +100,8 @@ results1 <- list(data = X1, model = mod.gee.ur, vcov = vcovv, coeffs = coeffs, C
 
 vcovv <- summary(mod.gee.r)$cov.scaled
 coeffs <- mod.gee.r$coefficients
-C1 <- rbind(c(-1, 0, 1, 0, -60, 0, 61, 0),
-            c(0, -1, 0, 1, 0, -60, 0, 61))
+C1 <- rbind(c(-1, 0, 1, 0, -log(60), 0, log(61), 0),
+            c(0, -1, 0, 1, 0, -log(60), 0, log(61)))
 rownames(C1) <- c("fine", "nfine")
 gamma <- C1 %*% coeffs
 vargamma <- C1 %*% vcovv %*% t(C1)
@@ -119,6 +120,7 @@ results2 <- list(data = X2, model = mod.gee.r, vcov = vcovv, coeffs = coeffs, C1
 results1$gamma
 results1$diff
 results1$Pval
+p.adjust(results1$Pval, "BH")
 results2$gamma
 results2$diff
 results2$Pval

@@ -32,7 +32,7 @@
 \spacing single
 \use_hyperref false
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -57,6 +57,10 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -90,7 +94,8 @@ Itamar Faran & Yuval Berger-Bar
 \begin_inset Newline newline
 \end_inset
 
-Insructor: Micha Mendel
+Instructor: Prof.
+ Micha Mendel
 \begin_inset Newline newline
 \end_inset
 
@@ -98,7 +103,7 @@ The Department of Statistics
 \begin_inset Newline newline
 \end_inset
 
-The Hebrew University
+2019 The Hebrew University
 \end_layout
 
 \begin_layout Section
@@ -111,7 +116,7 @@ Definition of the Game
 
 \begin_layout Standard
 Each round, a subject had to choose one of two buttons, each button with
- a reward which is unkown until the subject chooses which button to play.
+ a reward which is unknown until the subject chooses which button to play.
  The possible rewards from a button are either 
 \begin_inset Formula $+7$
 \end_inset
@@ -138,7 +143,7 @@ Each round, a subject had to choose one of two buttons, each button with
 \end_inset
 
 .
- After round 60, the former button's probabilty fell to 
+ After round 60, the former button's probability fell to 
 \begin_inset Formula $P\left(Reward=7\right)=0.5$
 \end_inset
 
@@ -153,7 +158,7 @@ Each round, a subject had to choose one of two buttons, each button with
 \begin_layout Standard
 Both buttons are 
 \bar under
-independet
+independent
 \bar default
 , meaning there are games where both have +7 or both have -5; Each button
  is an independent Bernoulli RV.
@@ -165,8 +170,7 @@ independet
 \begin_layout Standard
 To conclude, up until round 60, the right button had a higher expected reward
  than the left one; in round 61 the left button had higher expected reward.
- We will reffer to the button with higher reward as the correct button,
- e.g:
+ We will refer to the button with higher reward as the correct button, e.g:
 \end_layout
 
 \begin_layout Standard
@@ -203,7 +207,7 @@ Groups
 
 \begin_layout Standard
 Each subject played 100 rounds of this game.
- The expirement had 210 subjects divided in the following way:
+ The experiment had 210 subjects divided in the following way:
 \end_layout
 
 \begin_layout Standard
@@ -333,7 +337,7 @@ Fine Groups
 \begin_inset Text
 
 \begin_layout Plain Layout
-# Subject per Group
+# Subjects per Group
 \end_layout
 
 \end_inset
@@ -373,6 +377,13 @@ Fine Groups
 
 \end_layout
 
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
 \begin_layout Itemize
 
 \series bold
@@ -400,10 +411,10 @@ The Non-Fine Groups
 \series bold
 The Fine Groups
 \series default
- were groups of 3 individuals, similiar to the Non-Fine Groups, only that
+ were groups of 3 individuals, similar to the Non-Fine Groups, only that
  subjects in the minority where fined - if a subject was in the minority
  of the group, he had to pay 2 units that were given to the majority (each
- recieved 1 unit).
+ received 1 unit).
  For example; Say 2 out of 3 chose the correct button, then the group's
  choice is the correct button.
  However, the 3rd player was in minority, so his reward is +5 while the
@@ -505,7 +516,7 @@ G=3 & \iff Fine\:Group
 \end_layout
 
 \begin_layout Standard
-We are trying to model the qunatity 
+We are trying to model the quantity 
 \begin_inset Formula $P\left(Y_{ijt}=1|t,G\right)$
 \end_inset
 
@@ -563,6 +574,13 @@ P\left(Y_{ijt}=1|G=g,t=61\right) & =\frac{e^{\beta_{0,after}^{\left(g\right)}+\b
 P\left(Y_{ijt}=0|G=g,t=61\right) & =\frac{1}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}
 \end{align*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -659,7 +677,7 @@ and
 
  is a linear function of normal RVs.
  So, given the model we can conduct this hypothesis testing at once.
- The problem is specifing 
+ The problem is specifying 
 \begin_inset Formula $-\nabla^{2}\ell^{-1}$
 \end_inset
 
@@ -702,11 +720,11 @@ The inner-subject dependency can be modeled as an ARMA process with
 \end_inset
 
 , e.g.
- the probabilty of choosing the correct button at time 
+ the probability of choosing the correct button at time 
 \begin_inset Formula $t$
 \end_inset
 
- changes if we know what happend at time 
+ changes if we know what happened at time 
 \begin_inset Formula $t-1$
 \end_inset
 
@@ -749,6 +767,13 @@ Even if we assume that there is no partial correlation between
 \Rightarrow & Corr\left(Y_{ij,t-s},Y_{ikt}\right)\neq0
 \end{align*}
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -882,7 +907,7 @@ so as long as
 \begin_inset Formula $\ddot{\gamma}\left(g_{k},t\right)-\ddot{\gamma}\left(g_{l},t\right)$
 \end_inset
 
- or average directrly over 
+ or average directly over 
 \begin_inset Formula $\hat{\gamma}_{b}\left(g_{k},t\right)-\hat{\gamma}_{b}\left(g_{l},t\right)$
 \end_inset
 
@@ -915,7 +940,9 @@ Re-assign subjects to groups randomly - Individual groups are randomly assigned
 \end_layout
 
 \begin_layout Enumerate
-On the new dataset, conduct {3.1 Sub-Sampling}
+On the new dataset, conduct 
+\series bold
+{3.1 Sub-Sampling}
 \end_layout
 
 \begin_layout Standard
@@ -924,15 +951,17 @@ This allows us to estimate the distribution of
 \end_inset
 
  under 
+\begin_inset Formula $H_{0}$
+\end_inset
+
+:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
 \begin{array}{c}
-H_{0}:P\left(Y_{ijt}^{\left(g\right)}=1\right)\bot g\iff\\
-H_{0}:\gamma\left(Individual,60\right)=\gamma\left(Nonfine,60\right)=\gamma\left(Fine,60\right)
-\end{array}
+H_{0}:\gamma\left(Individual,60\right)=\gamma\left(Nonfine,60\right)=\gamma\left(Fine,60\right)\end{array}
 \]
 
 \end_inset
@@ -948,12 +977,827 @@ Then we can estimate the P-value:
 \begin_inset Formula 
 \begin{align*}
  & P_{H_{0}}\left(\left|\ddot{\gamma}\left(g_{k},t\right)-\ddot{\gamma}\left(g_{l},t\right)\right|>\left|\ddot{\gamma}_{actual}\left(g_{k},t\right)-\ddot{\gamma}_{actual}\left(g_{l},t\right)\right|\right)\\
- & =B^{-1}\sum\boldsymbol{1}_{\left\{ \left|\ddot{\gamma}_{b}\left(g_{k},t\right)-\ddot{\gamma}_{b}\left(g_{l},t\right)\right|>\left|\ddot{\gamma}_{actual}\left(g_{k},t\right)-\ddot{\gamma}_{actual}\left(g_{l},t\right)\right|\right\} }
+ & \overset{!}{=}B^{-1}\sum\boldsymbol{1}_{\left\{ \left|\ddot{\gamma}_{b}\left(g_{k},t\right)-\ddot{\gamma}_{b}\left(g_{l},t\right)\right|>\left|\ddot{\gamma}_{actual}\left(g_{k},t\right)-\ddot{\gamma}_{actual}\left(g_{l},t\right)\right|\right\} }
 \end{align*}
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Results
+\end_layout
+
+\begin_layout Subsubsection
+With Sub-Sampling B = 100 and Re-Sampling B = 1,000
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Groups
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Log Odds Ratio
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+P-Value
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+BH-Adjusted P-Value
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fine - Individual
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.677
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.04
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.06
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fine - Non-Fine
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.912
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.013
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.039
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Non-Fine - Individual
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.235
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.765
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.765
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can compare the re-sampling results with other models:
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+I
+\series default
+: Permutations test
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+II
+\series default
+: GEE model on 
+\bar under
+group responses
+\bar default
+ (e.g.
+ only 90 subjects instead of 210)
+\end_layout
+
+\begin_layout Itemize
+
+\series bold
+III
+\series default
+: GEE model on subject responses without specification of inter-group correlatio
+n (misspecified model - variance is under-estimated)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="10">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell multirow="3" alignment="center" valignment="middle" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Groups
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Log Odds Ratio
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+P-Value
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+BH-Adjusted P-Value
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell multirow="4" alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+I
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+II
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+III
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+I
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+II
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+III
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+I
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+II
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+III
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fine - Individual
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.677
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.811
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.595
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.04
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.066
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.036
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.06
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.199
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.054
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Fine - Non-Fine
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.912
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.349
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+-1.789
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.013
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.170
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.001
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.039
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.255
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.003
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\series bold
+Non-Fine - Individual
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.235
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.462
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.194
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.765
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.614
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.791
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.765
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.614
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0.791
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+From this table we can learn:
+\end_layout
+
+\begin_layout Itemize
+The permutations test is robust and gives similar results to models 
+\series bold
+II
+\series default
+ & 
+\series bold
+III
+\end_layout
+
+\begin_layout Itemize
+It compromises between the low Power of model 
+\series bold
+II
+\series default
+ and the misspecification of model 
+\series bold
+III
+\end_layout
+
+\begin_layout Standard
+The most different results arise in the 
+\series bold
+Fine - Non-Fine
+\series default
+ comparison.
+ This is not surprising, since in model 
+\series bold
+II
+\series default
+ there are 30 subjects in each group, thus the comparison is based on 60
+ subjects; while in model 
+\series bold
+III
+\series default
+ there are 90 subjects in each group resulting with a comparison based on
+ 180 subjects.
+ Without proper specification of the inter-group correlation, model 
+\series bold
+III
+\series default
+ has much more 
+\begin_inset Quotes eld
+\end_inset
+
+power
+\begin_inset Quotes erd
+\end_inset
+
+ resulting with lower P-values.
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The other two comparisons are made based on 60-120 subjects in models 
+\series bold
+II
+\series default
+, 
+\series bold
+III
+\series default
+ respectively, thus the difference in the P-values is smaller.
 \end_layout
 
 \end_body

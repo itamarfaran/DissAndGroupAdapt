@@ -131,6 +131,7 @@ tt <- Sys.time() - tt
 
 pvals <- sapply(1:3, function(i) mean(abs(boot_res[,i]) > abs(real_res[i])))
 names(pvals) <- names(real_res)
+max(sqrt(pvals*(1 - pvals)/B_bootstrap)) # max se
 p.adjust(pvals, method = "BH")
 tt
 
