@@ -1,4 +1,3 @@
-source("code/00_baseFunctions.R")
 source("code/analysis_tmp.R")
 
 # Build coefficients for group slopes and intercepts
@@ -26,7 +25,7 @@ prepare_data <- function(dt){
 }
 
 # Get data, subset randomly one user from each group, and compute all differences in log-odds-ratio
-sample_from_groups <- function(dt, round){
+sample_from_groups <- function(dt, return_logodds = FALSE, round = c(60, 61)){
   if(length(round) == 1) round <- rep(round, 2)
   
   # sort users by groups
@@ -53,6 +52,8 @@ sample_from_groups <- function(dt, round){
                     family = binomial(link = "logit"),
                     data = dt, subset = (subnum %in% which_obs_gee),
                     id = subnum, corstr = "ar1")
+  
+  if(!return_logodds) return(gee_mod$coefficients)
   
   # Build log odds ratio at rounds t by condition
   log_odds_ind <- 
@@ -83,7 +84,7 @@ sample_from_groups <- function(dt, round){
 }
 
 # Re-assign participants to groups and re-assign groups to conditions and average over B calls of sample_from_groups
-reassign_groups_and_cond <- function(dt, round, B){
+reassign_groups_and_cond <- function(dt, return_logodds = FALSE, round = c(60, 61), B){
   subnums <- copy(dt[,unique(subnum)])
   groupnums <- copy(dt[,unique(group_num)])
   
@@ -102,36 +103,76 @@ reassign_groups_and_cond <- function(dt, round, B){
   
   # Run sample_from_groups B times and simple-average on the results
   res <- colMeans(do.call(
-    rbind, parallel::mclapply(1:B, function(b) sample_from_groups(dt_new, round), mc.cores = 1)
+    rbind, parallel::mclapply(1:B, function(b) sample_from_groups(dt = dt_new,
+                                                                  return_logodds = return_logodds,
+                                                                  round = round),
+                              mc.cores = 1)
     ))
 
   return(res)
 }
 
 rounds <- c(60, 61)
-B_sample_groups <- 5000
-B_bootstrap <- 10000
+return_logodds <- FALSE
+B_sample_groups <- 100
+B_bootstrap <- 1000
 
-testData3 <- prepare_data(testData2[,.(round, subnum, group_num, cond, iscorrectInd)])
+tmp_dt <- prepare_data(testData2[,.(round, subnum, group_num, cond, iscorrectInd)])
 real_res <- colMeans(do.call(
   rbind, parallel::mclapply(X = 1:B_sample_groups,
-                            FUN = function(b) sample_from_groups(testData3, rounds),
+                            FUN = function(b) sample_from_groups(dt = tmp_dt,
+                                                                 return_logodds = return_logodds,
+                                                                 round = rounds),
                             mc.cores = 
                               ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
                     )))
 
 tt <- Sys.time()
 boot_res <- do.call(
-  rbind, parallel::mclapply(X = 1:B_bootstrap,
-                            FUN = function(k) reassign_groups_and_cond(testData2, rounds, B_sample_groups),
-                            mc.cores =
-                              ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
-                            ))
+  rbind, pbmcapply::pbmclapply(X = 1:B_bootstrap,
+                               FUN = function(k) reassign_groups_and_cond(dt = testData2,
+                                                                          return_logodds = return_logodds,
+                                                                          round = rounds,
+                                                                          B = B_sample_groups),
+                               mc.cores =
+                                 ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
+                               ))
 tt <- Sys.time() - tt
 
-pvals <- sapply(1:3, function(i) mean(abs(boot_res[,i]) > abs(real_res[i])))
-names(pvals) <- names(real_res)
+if(return_logodds){
+  pvals <- sapply(1:3, function(i) mean(abs(boot_res[,i]) > abs(real_res[i])))
+  names(pvals) <- names(real_res)
+} else {
+  diffs_of_coefs_real <- c(
+    real_res[4] - real_res[2],
+    real_res[8] - real_res[6],
+    real_res[12] - real_res[10]
+  )
+  diffs_of_diffs_real <- c(
+    diffs_of_coefs_real[3] - diffs_of_coefs_real[1],
+    diffs_of_coefs_real[3] - diffs_of_coefs_real[2],
+    diffs_of_coefs_real[2] - diffs_of_coefs_real[1]
+  )
+  names(diffs_of_diffs_real) <- c("fine_ind", "fine_nonefine", "nonfine_ind")
+  
+  diffs_of_coefs_boot <- cbind(
+    boot_res[,4] - boot_res[,2],
+    boot_res[,8] - boot_res[,6],
+    boot_res[,12] - boot_res[,10]
+  )
+  diffs_of_diffs_boot <- cbind(
+    diffs_of_coefs_boot[,3] - diffs_of_coefs_boot[,1],
+    diffs_of_coefs_boot[,3] - diffs_of_coefs_boot[,2],
+    diffs_of_coefs_boot[,2] - diffs_of_coefs_boot[,1]
+  )
+  colnames(diffs_of_diffs_boot) <- c("fine_ind", "fine_nonefine", "nonfine_ind")
+  
+  pvals <- sapply(1:3, function(i) mean(abs(boot_res[,i]) > abs(real_res[i])))
+  names(pvals) <- names(diff_real_res)
+}
+
 max(sqrt(pvals*(1 - pvals)/B_bootstrap)) # max se
+p.adjust(pvals, method = "none")
 p.adjust(pvals, method = "BH")
 tt
 
