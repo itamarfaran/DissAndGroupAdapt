@@ -186,45 +186,12 @@ log_odds <- compute_log_odds(coefs_vcov$coeffs,
 diffs <- compute_all_contrasts(log_odds$log_odds, log_odds$var_log_odds)
 compute_zvals(diffs$diffs, diffs$var_diffs)
 
-##### Bagging #####
-
-B <- 1000
-tt <- Sys.time()
-res_boot <- pbmclapply(1:B, function(b) boot_geeglm(testData2), mc.cores = 
-                         ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
-                       )
-tt <- Sys.time() - tt
-
-coeffs_boot <- do.call(rbind, purrr::transpose(res_boot)$coeffs)
-vcov_boot <- array(unlist(purrr::transpose(res_boot)$vcov),
-                   dim = c(ncol(coeffs_boot), ncol(coeffs_boot), B))
-
-coeffs_boot_mean <- colMeans(coeffs_boot)
-vcov_boot_emp <- cov(coeffs_boot)
-vcov_boot_mean <- vcov_boot[,,1]/B
-for(b in 2:B) vcov_boot_mean <- vcov_boot_mean + vcov_boot[,,b]/B
-
-
-log_odds_boot <- compute_log_odds(coeffs_boot_mean,
-                                  vcov_boot_emp, # vcov_boot_mean
-                                  c(-1, -log(60), 1, log(60)))
-diffs_boot <- compute_all_contrasts(log_odds_boot$log_odds, log_odds_boot$var_log_odds)
-compute_zvals(diffs$diffs, diffs$var_diffs)
-compute_zvals(diffs_boot$diffs, diffs_boot$var_diffs)
-
-tt
-link <- paste0("Data/binomial_bagg_", Sys.time(), ".RData")
-link <- gsub(":", "-", link)
-link <- gsub(" ", "_", link)
-save.image(link)
-
 ##### Plot Results #####
 
 predictions <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)]
 predictions[cond == "individual", predictions := predict(gee_mods$ind, type = "response")]
 predictions[cond == "nonfine", predictions := predict(gee_mods$nonfine, type = "response")]
 predictions[cond == "fine", predictions := predict(gee_mods$fine, type = "response")]
-
 
 p_scale_plt <- plot_diff_bingee(predictions, "props")
 odds_scale_plt <- plot_diff_bingee(predictions, "odds")
@@ -239,3 +206,40 @@ odds_scale_plt$diff
 log_odds_scale_plt$vs
 log_odds_scale_plt$diff
 
+##### Bagging #####
+
+ncores <- ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
+B <- 50*ncores
+
+tt <- Sys.time()
+res_boot <- pbmclapply(1:B, function(b) boot_geeglm(testData2), mc.cores = ncores)
+tt <- Sys.time() - tt
+
+coeffs_boot <- do.call(rbind, purrr::transpose(res_boot)$coeffs)
+vcov_boot <- array(unlist(purrr::transpose(res_boot)$vcov),
+                   dim = c(ncol(coeffs_boot), ncol(coeffs_boot), B))
+
+drop_obs <- unique(which(abs(coeffs_boot) > 10^2, arr.ind = T)[,1])
+coeffs_boot <- coeffs_boot[-drop_obs,]
+vcov_boot <- vcov_boot[,,-drop_obs]
+Btag <- B - length(drop_obs)
+
+coeffs_boot_mean <- colMeans(coeffs_boot)
+vcov_boot_emp <- cov(coeffs_boot)
+vcov_boot_mean <- vcov_boot[,,1]/Btag
+for(b in 2:Btag) vcov_boot_mean <- vcov_boot_mean + vcov_boot[,,b]/Btag
+
+
+log_odds_boot <- compute_log_odds(coeffs_boot_mean,
+                                  vcov_boot_emp,
+                                  # vcov_boot_mean,
+                                  c(-1, -log(60), 1, log(60)))
+diffs_boot <- compute_all_contrasts(log_odds_boot$log_odds, log_odds_boot$var_log_odds)
+compute_zvals(diffs$diffs, diffs$var_diffs)
+compute_zvals(diffs_boot$diffs, diffs_boot$var_diffs)
+tt
+
+link <- paste0("Data/binomial_bagg_", Sys.time(), ".RData")
+link <- gsub(":", "-", link)
+link <- gsub(" ", "_", link)
+save.image(link)
