@@ -74,9 +74,10 @@ boot_geeglm <- function(dt, do.boot = TRUE, even.groups = TRUE, return.model = F
   return(get_coefs_vcov(gee_mod_ind, gee_mod_nonfine, gee_mod_fine))
 }
 compute_log_odds <- function(coef, vcov, contrast){
-  C1 <- rbind(c(contrast, rep(0, 4), rep(0, 4)),
-              c(rep(0, 4), contrast, rep(0, 4)),
-              c(rep(0, 4), rep(0, 4), contrast))
+  l <- length(contrast)
+  C1 <- rbind(c(contrast, rep(0, l), rep(0, l)),
+              c(rep(0, l), contrast, rep(0, l)),
+              c(rep(0, l), rep(0, l), contrast))
   rownames(C1) <- c("ind", "nonfine", "fine")
   return(list(log_odds = C1 %*% coef,
               var_log_odds = C1 %*% vcov %*% t(C1)))
@@ -100,9 +101,9 @@ compute_zvals <- function(est, vcov, sig.level = 0.05, adjust.ci = TRUE, p.adjus
   p <- 2*pnorm(abs(z), lower.tail = FALSE)
   p.adj <- p.adjust(p, p.adjust.method)
   
-  res <- cbind(est, sds, est - q*sds, est + q*sds, z, p, p.adj)
+  res <- cbind(est, exp(est), sds, est - q*sds, est + q*sds, z, p, p.adj)
   
-  colnames(res) <- c("Estimate", "SD",
+  colnames(res) <- c("Estimate", "exp[Estimate]", "SD",
                      paste0("Lower", (1 - sig.level)*100, "%", ifelse(adjust.ci, "(", "(Not "), "Adjusted)"),
                      paste0("Upper", (1 - sig.level)*100, "%", ifelse(adjust.ci, "(", "(Not "), "Adjusted)"),
                      "Z-Value", "P-Value",
@@ -140,23 +141,23 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
     mad_ = median(abs(errors_dt))
   )
   
-  message("Summary of errors:")
+  cat("Summary of errors:\n")
   print(summary(errors_dt))
   cat(paste0("RMSE: ", round(error_metrics$rmse, 5), " || MAD: ", round(error_metrics$mad_, 5)))
   
   vs <- dt[,.(emp_mean = scale_fn(iscorrectGr),
-              predicted_mean = scale_fn(predictions)),
+              predicted_mean = scale_fn(predictions),
+              aftershock = round > 60),
            by = .(round, cond)] %>%
-    gather(type, value, -round, -cond) %>%
-    ggplot(aes(x = round, y = movavg(value, 4, "e"), col = cond, linetype = type)) +
+    gather(type, value, -round, -cond, -aftershock) %>%
+    ggplot(aes(x = round, y = movavg(value, 3, "e"), col = cond, linetype = type)) + #, by = aftershock)) +
     geom_line(size = 1) + geom_vline(xintercept = 0) +
     labs(title = paste("Empiric Mean vs. Predicted Value", scale_title),
          x = "Round", y = "Probability of Success", col = "Condition", type = "Type")
   
   vs <- vs + if(scale == "odds") scale_y_log10() else geom_hline(yintercept = 0)
   
-  diff <- predictions[,.(diff = scale_fn(iscorrectGr) - scale_fn(predictions)),
-                      by = .(round, cond)] %>%
+  diff <- dt[,.(diff = scale_fn(iscorrectGr) - scale_fn(predictions)), by = .(round, cond)] %>%
     ggplot(aes(x = round, y = movavg(diff, 3, "e"), col = cond)) +
     geom_line(size = 1) + geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
     stat_summary(aes(group = 1), fun.y = mean, geom = "line", size = 1.2, linetype = 2) +
@@ -182,6 +183,10 @@ log_odds <- compute_log_odds(coefs_vcov$coeffs,
 
 diffs <- compute_all_contrasts(log_odds$log_odds, log_odds$var_log_odds)
 compute_zvals(diffs$diffs, diffs$var_diffs)
+
+slope_loc <- c(2, 6, 10) + 2
+diffs_slope <- compute_all_contrasts(coefs_vcov$coeffs[slope_loc], coefs_vcov$vcov[slope_loc, slope_loc])
+compute_zvals(diffs_slope$diffs, diffs_slope$var_diffs)
 
 ##### Plot Results #####
 
@@ -251,3 +256,6 @@ link <- paste0("Data/binomial_bagg_B", B, "_", Sys.time(), ".RData")
 link <- gsub(":", "-", link)
 link <- gsub(" ", "_", link)
 save.image(link)
+
+
+#####
