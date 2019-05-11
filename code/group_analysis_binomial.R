@@ -23,7 +23,7 @@ prepare_data <- function(dt){
   )]
   return(dt_new)
 }
-boot_geeglm <- function(dt, do.boot = TRUE, return.model = FALSE, seed){
+boot_geeglm <- function(dt, do.boot = TRUE, even.groups = TRUE, return.model = FALSE, seed){
   cdt <- copy(dt)
   
   cdt <- cdt[,.(success = sum(iscorrectInd), fail = .N - sum(iscorrectInd)),
@@ -31,7 +31,11 @@ boot_geeglm <- function(dt, do.boot = TRUE, return.model = FALSE, seed){
   
   if(do.boot){
     if(!missing(seed)) set.seed(seed)
-    groups2boot <- cdt[,sort(sample(unique(group_num), replace = T))]
+    groups2boot <- if(even.groups){
+      sort(as.numeric(
+        sapply(cdt[,unique(cond)], function(c) cdt[cond == c, sample(unique(group_num), replace = T)])
+      ))
+    } else cdt[,sort(sample(unique(group_num), replace = T))]
     cdt_booted <- 
       do.call(rbind,
               lapply(1:length(groups2boot),
@@ -68,13 +72,6 @@ boot_geeglm <- function(dt, do.boot = TRUE, return.model = FALSE, seed){
   
   if(return.model) return(list(ind = gee_mod_ind, nonfine = gee_mod_nonfine, fine = gee_mod_fine))
   return(get_coefs_vcov(gee_mod_ind, gee_mod_nonfine, gee_mod_fine))
-    # list(coeffs = c(gee_mod_ind$coefficients,
-    #                      gee_mod_nonfine$coefficients,
-    #                      gee_mod_fine$coefficients),
-    #           vcov = as.matrix(bdiag(summary(gee_mod_ind)$cov.scaled,
-    #                                  summary(gee_mod_nonfine)$cov.scaled,
-    #                                  summary(gee_mod_fine)$cov.scaled))
-    #           ))
 }
 compute_log_odds <- function(coef, vcov, contrast){
   C1 <- rbind(c(contrast, rep(0, 4), rep(0, 4)),
@@ -223,10 +220,15 @@ drop_obs <- data.table(which(abs(coeffs_boot) > 10^2.5, arr.ind = T))
 drop_obs[between(col, 1, 4), dropped := "ind"]
 drop_obs[between(col, 5, 8), dropped := "nonfine"]
 drop_obs[between(col, 9, 12), dropped := "fine"]
-
 drop_obs_vec <- drop_obs[,sort(unique(row))]
-coeffs_boot_drp <- coeffs_boot[-drop_obs_vec,]
-vcov_boot_drp <- vcov_boot[,,-drop_obs_vec]
+
+if(length(drop_obs_vec) > 0){
+  coeffs_boot_drp <- coeffs_boot[-drop_obs_vec,]
+  vcov_boot_drp <- vcov_boot[,,-drop_obs_vec]
+} else {
+  coeffs_boot_drp <- coeffs_boot
+  vcov_boot_drp <- vcov_boot
+}
 Btag <- B - length(drop_obs_vec)
 message(paste("Bootstraps dropped: ", round(1 - Btag/B, 4)*100, "%" ))
 unique(drop_obs[,.(row, dropped)])[,.N, by = dropped]
@@ -245,7 +247,7 @@ compute_zvals(diffs$diffs, diffs$var_diffs)
 compute_zvals(diffs_boot$diffs, diffs_boot$var_diffs)
 tt
 
-link <- paste0("Data/binomial_bagg_", Sys.time(), ".RData")
+link <- paste0("Data/binomial_bagg_B", B, "_", Sys.time(), ".RData")
 link <- gsub(":", "-", link)
 link <- gsub(" ", "_", link)
 save.image(link)
