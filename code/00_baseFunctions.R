@@ -4,7 +4,7 @@ ipak <- function(pkg){
     install.packages(new.pkg, dependencies = TRUE)
   sapply(pkg, require, character.only = TRUE)
 }
-ipak(c("parallel", "pbmcapply", "readr", "tidyverse", "data.table", "dtplyr", "pracma", "geepack"))
+ipak(c("parallel", "pbmcapply", "readr", "tidyverse", "data.table", "dtplyr", "pracma", "geepack", "plotly", "Matrix"))
 # ipak(c("corrplot", "msm", "markovchain", "lme4", "glmmTMB"))
 
 createID <- function(x, factor = TRUE){

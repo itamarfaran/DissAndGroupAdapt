@@ -119,30 +119,30 @@ tt <- Sys.time() - tt
 
 ##### Compute absolute diffs (beta1g - beta1g) #####
 diffs_of_coefs_real <- c(
-  real_res[4] - real_res[2],
-  real_res[8] - real_res[6],
-  real_res[12] - real_res[10]
+  real_res[4] - real_res[2], # ind
+  real_res[8] - real_res[6], # nonfine
+  real_res[12] - real_res[10] # fine
 )
 diffs_of_diffs_real <- c(
-  diffs_of_coefs_real[3] - diffs_of_coefs_real[1],
-  diffs_of_coefs_real[3] - diffs_of_coefs_real[2],
-  diffs_of_coefs_real[2] - diffs_of_coefs_real[1]
+  diffs_of_coefs_real[3] - diffs_of_coefs_real[1], # fine - ind
+  diffs_of_coefs_real[3] - diffs_of_coefs_real[2], # fine - nonfine
+  diffs_of_coefs_real[2] - diffs_of_coefs_real[1] # nonfine - ind
 )
 names(diffs_of_diffs_real) <- c("fine_ind", "fine_nonefine", "nonfine_ind")
 
 diffs_of_coefs_boot <- cbind(
-  boot_res[,4] - boot_res[,2],
-  boot_res[,8] - boot_res[,6],
-  boot_res[,12] - boot_res[,10]
+  boot_res[,4] - boot_res[,2], # ind
+  boot_res[,8] - boot_res[,6], # nonfine
+  boot_res[,12] - boot_res[,10] # fine
 )
 diffs_of_diffs_boot <- cbind(
-  diffs_of_coefs_boot[,3] - diffs_of_coefs_boot[,1],
-  diffs_of_coefs_boot[,3] - diffs_of_coefs_boot[,2],
-  diffs_of_coefs_boot[,2] - diffs_of_coefs_boot[,1]
+  diffs_of_coefs_boot[,3] - diffs_of_coefs_boot[,1], # fine - ind
+  diffs_of_coefs_boot[,3] - diffs_of_coefs_boot[,2], # fine - nonfine
+  diffs_of_coefs_boot[,2] - diffs_of_coefs_boot[,1] # nonfine - ind
 )
 colnames(diffs_of_diffs_boot) <- c("fine_ind", "fine_nonefine", "nonfine_ind")
 
-pvals_diffs <- sapply(1:3, function(i) mean(abs(diffs_of_diffs_boot[i]) > abs(diffs_of_diffs_real[i])))
+pvals_diffs <- sapply(1:3, function(i) mean(abs(diffs_of_diffs_boot[,i]) > abs(diffs_of_diffs_real[i])))
 names(pvals_diffs) <- names(diffs_of_diffs_real)
 
 ##### Compute log odds at time t #####
