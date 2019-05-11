@@ -219,11 +219,17 @@ coeffs_boot <- do.call(rbind, purrr::transpose(res_boot)$coeffs)
 vcov_boot <- array(unlist(purrr::transpose(res_boot)$vcov),
                    dim = c(ncol(coeffs_boot), ncol(coeffs_boot), B))
 
-drop_obs <- unique(which(abs(coeffs_boot) > 10^2.5, arr.ind = T)[,1])
-coeffs_boot_drp <- coeffs_boot[-drop_obs,]
-vcov_boot_drp <- vcov_boot[,,-drop_obs]
-Btag <- B - length(drop_obs)
+drop_obs <- data.table(which(abs(coeffs_boot) > 10^2.5, arr.ind = T))
+drop_obs[between(col, 1, 4), dropped := "ind"]
+drop_obs[between(col, 5, 8), dropped := "nonfine"]
+drop_obs[between(col, 9, 12), dropped := "fine"]
+
+drop_obs_vec <- drop_obs[,sort(unique(row))]
+coeffs_boot_drp <- coeffs_boot[-drop_obs_vec,]
+vcov_boot_drp <- vcov_boot[,,-drop_obs_vec]
+Btag <- B - length(drop_obs_vec)
 message(paste("Bootstraps dropped: ", round(1 - Btag/B, 4)*100, "%" ))
+unique(drop_obs[,.(row, dropped)])[,.N, by = dropped]
 
 coeffs_boot_mean <- colMeans(coeffs_boot_drp)
 vcov_boot_emp <- cov(coeffs_boot_drp)
