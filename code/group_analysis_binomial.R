@@ -92,7 +92,6 @@ compute_all_contrasts <- function(log_odds, var_log_odds){
               var_diffs = C2 %*% var_log_odds %*% t(C2)))
 }
 compute_zvals <- function(est, vcov, sig.level = 0.05, adjust.ci = TRUE, p.adjust.method = "BH"){
-  est
   sds <- sqrt(diag(vcov))
   q <- ifelse(adjust.ci,
               mvtnorm::qmvnorm(1 - sig.level/2, corr = cov2cor(vcov))$quantile,
@@ -101,17 +100,36 @@ compute_zvals <- function(est, vcov, sig.level = 0.05, adjust.ci = TRUE, p.adjus
   p <- 2*pnorm(abs(z), lower.tail = FALSE)
   p.adj <- p.adjust(p, p.adjust.method)
   
-  res <- cbind(est, exp(est), sds, est - q*sds, est + q*sds, z, p, p.adj)
+  res <- cbind(est, est - q*sds, est + q*sds,
+               exp(est), exp(est - q*sds), exp(est + q*sds),
+               sds, z, p, p.adj)
   
-  colnames(res) <- c("Estimate", "exp[Estimate]", "SD",
+  colnames(res) <- c("Estimate",
                      paste0("Lower", (1 - sig.level)*100, "%", ifelse(adjust.ci, "(", "(Not "), "Adjusted)"),
                      paste0("Upper", (1 - sig.level)*100, "%", ifelse(adjust.ci, "(", "(Not "), "Adjusted)"),
-                     "Z-Value", "P-Value",
+                     "exp[Estimate]",
+                     paste0("Lower", (1 - sig.level)*100, "%", ifelse(adjust.ci, "(", "(Not "), "Adjusted) (exp)"),
+                     paste0("Upper", (1 - sig.level)*100, "%", ifelse(adjust.ci, "(", "(Not "), "Adjusted) (exp)"),
+                     "SD", "Z-Value", "P-Value",
                      paste0("Adj.P-Value(", p.adjust.method, ")"))
   rownames(res) <- str_replace(rownames(res), "_", " - ")
   rownames(res) <- tools::toTitleCase(rownames(res))
   return(t(res))
 }
+compute_all <- function(coefs_vcov_lst, contrast, sig.level = 0.05, adjust.ci = TRUE, p.adjust.method = "BH"){
+  contrast_per_group <- compute_log_odds(coefs_vcov_lst$coeffs,
+                                         coefs_vcov_lst$vcov,
+                                         contrast)
+  diffs_contrast <- compute_all_contrasts(contrast_per_group$log_odds, contrast_per_group$var_log_odds)
+  chisq_val <- t(diffs_contrast$diffs[1:2]) %*% solve(diffs_contrast$var_diffs[1:2, 1:2]) %*% diffs_contrast$diffs[1:2]
+  
+  pval_chisq <- pchisq(chisq_val, 2, lower.tail = FALSE)
+  zvals <- compute_zvals(diffs_contrast$diffs, diffs_contrast$var_diffs)
+  
+  return(list(chisq = c("Chisq Value" = chisq_val, "DF" = 2, "P-Value" = pval_chisq),
+              z = zvals))
+}
+
 get_coefs_vcov <- function(..., lst){
   models <- if(missing(lst)) list(...) else lst
   coeffs <- simplify(purrr::transpose(models)$coefficients)
@@ -145,13 +163,19 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
   print(summary(errors_dt))
   cat(paste0("RMSE: ", round(error_metrics$rmse, 5), " || MAD: ", round(error_metrics$mad_, 5)))
   
-  vs <- dt[,.(emp_mean = scale_fn(iscorrectGr),
-              predicted_mean = scale_fn(predictions),
-              aftershock = round > 60),
-           by = .(round, cond)] %>%
-    gather(type, value, -round, -cond, -aftershock) %>%
-    ggplot(aes(x = round, y = movavg(value, 3, "e"), col = cond, linetype = type)) + #, by = aftershock)) +
-    geom_line(size = 1) + geom_vline(xintercept = 0) +
+  dt1 <- dt[,.(emp_mean = scale_fn(iscorrectGr),
+              predicted_mean = scale_fn(predictions)),
+           by = .(round, cond)]
+  dt1[, `:=` (error = emp_mean - predicted_mean)]
+  dt1[, `:=` (lower = predicted_mean + error*(error < 0),
+              upper = predicted_mean + error*(error > 0)
+              )]
+  vs <-
+    ggplot(dt1, aes(x = round, col = cond)) +
+    geom_line(aes(y = predicted_mean), size = 1) +
+    geom_vline(xintercept = 0) +
+    geom_linerange(aes(ymin = lower, ymax = upper), alpha = 0.4) + 
+    geom_point(aes(y = emp_mean), shape = 18, alpha = 0.6) + 
     labs(title = paste("Empiric Mean vs. Predicted Value", scale_title),
          x = "Round", y = "Probability of Success", col = "Condition", type = "Type")
   
@@ -177,19 +201,13 @@ lapply(gee_mods, summary)
 
 coefs_vcov <- get_coefs_vcov(lst = gee_mods)
 
-log_odds <- compute_log_odds(coefs_vcov$coeffs,
-                             coefs_vcov$vcov,
-                             c(-1, -log(60), 1, log(60)))
-
-diffs <- compute_all_contrasts(log_odds$log_odds, log_odds$var_log_odds)
-compute_zvals(diffs$diffs, diffs$var_diffs)
-
-slope_loc <- c(2, 6, 10) + 2
-diffs_slope <- compute_all_contrasts(coefs_vcov$coeffs[slope_loc], coefs_vcov$vcov[slope_loc, slope_loc])
-compute_zvals(diffs_slope$diffs, diffs_slope$var_diffs)
+### Difference of beta_1_before
+compute_all(coefs_vcov, c(0, 1, 0, 0))
+compute_all(coefs_vcov, c(0, 0, 0, 1))
+compute_all(coefs_vcov, c(0, -1, 0, 1))
+compute_all(coefs_vcov, c(-1, -log(60), 1, log(60)))
 
 ##### Plot Results #####
-
 predictions <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)]
 predictions[cond == "individual", predictions := predict(gee_mods$ind, type = "response")]
 predictions[cond == "nonfine", predictions := predict(gee_mods$nonfine, type = "response")]
@@ -199,14 +217,49 @@ p_scale_plt <- plot_diff_bingee(predictions, "props")
 odds_scale_plt <- plot_diff_bingee(predictions, "odds")
 log_odds_scale_plt <- plot_diff_bingee(predictions, "logodds")
 
-p_scale_plt$vs
-p_scale_plt$diff
+get_preds_and_sd <- function(mod){
+  X <- rbind(
+    cbind(rep(1, 60), log(1:60), rep(0, 60), rep(0, 60)),
+    cbind(rep(0, 40), rep(0, 40), rep(1, 40), log(61:100))
+  )
+  
+  return(list(
+    X %*% mod$coefficients,
+    sqrt(diag(X %*% summary(mod)$cov.scaled %*% t(X) ))
+  ))
+}
+predictions2 <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)
+                        ][
+                          ,.(average = mean(iscorrectGr)), by = .(round, cond)]
 
-odds_scale_plt$vs
-odds_scale_plt$diff
+predictions2[cond == "individual", c("pred", "sd") := get_preds_and_sd(gee_mods$ind)]
+predictions2[cond == "nonfine", c("pred", "sd") := get_preds_and_sd(gee_mods$nonfine)]
+predictions2[cond == "fine", c("pred", "sd") := get_preds_and_sd(gee_mods$fine)]
+predictions2[, `:=` (lower = pred - qnorm(0.975)*sd, upper = pred + qnorm(0.975)*sd)]
+predictions2[, `:=` (pred = plogis(pred), sd = NULL, lower = plogis(lower), upper = plogis(upper))]
 
-log_odds_scale_plt$vs
-log_odds_scale_plt$diff
+ggplot(predictions2, aes(x = round)) + 
+  geom_ribbon(aes(ymin = lower, ymax = upper),
+              alpha = 0.33, col = NA, fill = "#00CED1") +
+  geom_line(aes(y = average), col = "#FF6347", size = 1) + 
+  facet_grid(cond ~ .) + 
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) + 
+  labs(title = "Empiric Mean and 95% CI of Predicted Value",
+       x = "Round", y = "Probability of Success")
+
+predictions2_melt <- melt(predictions2, id.vars = c("round", "cond"))
+predictions2_melt[variable %in% c("upper", "lower"), type := "CI"]
+predictions2_melt[!variable %in% c("upper", "lower"), type := "Estimate"]
+predictions2_melt[variable == "average", model := "Average"]
+predictions2_melt[!variable == "average", model := "GEE"]
+
+ggplot(predictions2_melt, aes(x = round, y = value, col = model, linetype = type, by = variable)) + 
+  geom_line(size = 1) + facet_grid(cond ~ .) + 
+  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) + 
+  scale_linetype_manual(values = c("dashed", "solid")) + 
+  labs(title = "Empiric Mean vs. Predicted Value",
+       x = "Round", y = "Probability of Success",
+       linetype = "CI/Estimate", col = "Model/Average")
 
 ##### Bagging #####
 
