@@ -32,7 +32,7 @@
 \spacing single
 \use_hyperref false
 \papersize default
-\use_geometry true
+\use_geometry false
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -57,10 +57,6 @@
 \shortcut idx
 \color #008000
 \end_index
-\leftmargin 3cm
-\topmargin 3cm
-\rightmargin 3cm
-\bottommargin 3cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -94,8 +90,7 @@ Itamar Faran & Yuval Berger-Bar
 \begin_inset Newline newline
 \end_inset
 
-Instructor: Prof.
- Micha Mendel
+Insructor: Micha Mendel
 \begin_inset Newline newline
 \end_inset
 
@@ -103,7 +98,7 @@ The Department of Statistics
 \begin_inset Newline newline
 \end_inset
 
-2019 The Hebrew University
+The Hebrew University
 \end_layout
 
 \begin_layout Section
@@ -116,7 +111,7 @@ Definition of the Game
 
 \begin_layout Standard
 Each round, a subject had to choose one of two buttons, each button with
- a reward which is unknown until the subject chooses which button to play.
+ a reward which is unkown until the subject chooses which button to play.
  The possible rewards from a button are either 
 \begin_inset Formula $+7$
 \end_inset
@@ -143,7 +138,7 @@ Each round, a subject had to choose one of two buttons, each button with
 \end_inset
 
 .
- After round 60, the former button's probability fell to 
+ After round 60, the former button's probabilty fell to 
 \begin_inset Formula $P\left(Reward=7\right)=0.5$
 \end_inset
 
@@ -158,7 +153,7 @@ Each round, a subject had to choose one of two buttons, each button with
 \begin_layout Standard
 Both buttons are 
 \bar under
-independent
+independet
 \bar default
 , meaning there are games where both have +7 or both have -5; Each button
  is an independent Bernoulli RV.
@@ -170,7 +165,8 @@ independent
 \begin_layout Standard
 To conclude, up until round 60, the right button had a higher expected reward
  than the left one; in round 61 the left button had higher expected reward.
- We will refer to the button with higher reward as the correct button, e.g:
+ We will reffer to the button with higher reward as the correct button,
+ e.g:
 \end_layout
 
 \begin_layout Standard
@@ -207,7 +203,7 @@ Groups
 
 \begin_layout Standard
 Each subject played 100 rounds of this game.
- The experiment had 210 subjects divided in the following way:
+ The expirement had 210 subjects divided in the following way:
 \end_layout
 
 \begin_layout Standard
@@ -337,7 +333,7 @@ Fine Groups
 \begin_inset Text
 
 \begin_layout Plain Layout
-# Subjects per Group
+# Subject per Group
 \end_layout
 
 \end_inset
@@ -377,13 +373,6 @@ Fine Groups
 
 \end_layout
 
-\begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
 \begin_layout Itemize
 
 \series bold
@@ -411,10 +400,10 @@ The Non-Fine Groups
 \series bold
 The Fine Groups
 \series default
- were groups of 3 individuals, similar to the Non-Fine Groups, only that
+ were groups of 3 individuals, similiar to the Non-Fine Groups, only that
  subjects in the minority where fined - if a subject was in the minority
  of the group, he had to pay 2 units that were given to the majority (each
- received 1 unit).
+ recieved 1 unit).
  For example; Say 2 out of 3 chose the correct button, then the group's
  choice is the correct button.
  However, the 3rd player was in minority, so his reward is +5 while the
@@ -443,28 +432,24 @@ Model Definition
 
 \begin_layout Standard
 Define 
-\begin_inset Formula $Y_{gijt}\in\left\{ 0,1\right\} $
+\begin_inset Formula $Y_{ijt}\in\left\{ 0,1\right\} $
 \end_inset
 
  where 
-\begin_inset Formula $g\in\left\{ 1:individuals,\,2:non-fine,\,3:fine\right\} $
-\end_inset
-
- represents group type, 
-\begin_inset Formula $i\in\left\{ 1,..,30\right\} $
+\begin_inset Formula $i$
 \end_inset
 
  represents group, 
-\begin_inset Formula $j\in\left\{ 1,...,3\right\} $
+\begin_inset Formula $j$
 \end_inset
 
  represents individual and 
-\begin_inset Formula $t\in\left\{ 1,...,100\right\} $
+\begin_inset Formula $t$
 \end_inset
 
  represents round number.
  
-\begin_inset Formula $Y_{gijt}$
+\begin_inset Formula $Y_{ijt}$
 \end_inset
 
  is equal to 1 when 
@@ -488,11 +473,7 @@ subject
 \begin_inset Formula $i$
 \end_inset
 
- from type 
-\begin_inset Formula $g$
-\end_inset
-
- chose the correct option at round 
+ chose correct option at round 
 \begin_inset Formula $t$
 \end_inset
 
@@ -500,8 +481,32 @@ subject
 \end_layout
 
 \begin_layout Standard
-We are trying to model the quantity 
-\begin_inset Formula $P\left(Y_{gijt}=1\right)=\pi_{gt}$
+\begin_inset Formula $t\in\left\{ 1,...,100\right\} $
+\end_inset
+
+ and 
+\begin_inset Formula $G\in\left\{ 1,2,3\right\} $
+\end_inset
+
+ where:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{align*}
+G=1 & \iff Individual\\
+G=2 & \iff Non-Fine\:Group\\
+G=3 & \iff Fine\:Group
+\end{align*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We are trying to model the qunatity 
+\begin_inset Formula $P\left(Y_{ijt}=1|t,G\right)$
 \end_inset
 
  where the relationship between 
@@ -527,7 +532,7 @@ We are trying to model the quantity
 \begin_layout Standard
 \begin_inset Formula 
 \[
-logit\left(\pi_{gt}\right)=\begin{cases}
+logit\left(P\left(Y_{ijt}=1|t,G\right)\right)=\begin{cases}
 \beta_{0,before}^{\left(g\right)}+\beta_{1,before}^{\left(g\right)}\cdot h\left(t\right) & t\leq60\\
 \beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot h\left(t\right) & t>60
 \end{cases}
@@ -540,31 +545,24 @@ logit\left(\pi_{gt}\right)=\begin{cases}
 
 \begin_layout Standard
 where 
+\begin_inset Formula $G\in\left\{ 1,2,3\right\} $
+\end_inset
+
+ and 
 \begin_inset Formula $h$
 \end_inset
 
- is some sub-linear function (the 
-\begin_inset Formula $\ln$
-\end_inset
-
- function).
+ is some sub-linear function.
  Then, it follows that
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\pi_{g,61} & =\frac{e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}\\
-1-\pi_{g,61} & =\frac{1}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}
+P\left(Y_{ijt}=1|G=g,t=61\right) & =\frac{e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}\\
+P\left(Y_{ijt}=0|G=g,t=61\right) & =\frac{1}{1+e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}
 \end{align*}
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Newpage newpage
 \end_inset
 
 
@@ -577,7 +575,7 @@ The odds is defined by:
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\frac{\pi_{g,61}}{1-\pi_{g,61}}=\exp\left[\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61\right]
+\frac{P\left(Y=1|G=g,t=61\right)}{P\left(Y=0|G=g,t=61\right)}=\exp\left[\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61\right]
 \]
 
 \end_inset
@@ -592,7 +590,7 @@ and we can define the odds ratio between time 61 and 60 as
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\frac{\nicefrac{\pi_{g,61}}{1-\pi_{g,61}}}{\nicefrac{\pi_{g,60}}{1-\pi_{g,60}}}=\frac{e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}{e^{\beta_{0,before}^{\left(g\right)}+\beta_{1,before}^{\left(g\right)}\cdot60}}=\exp\left[\beta_{0,after}^{\left(g\right)}-\beta_{0,before}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61-\beta_{1,before}^{\left(g\right)}\cdot60\right]
+\frac{\frac{P\left(Y=1|G=g,t=61\right)}{P\left(Y=0|G=g,t=61\right)}}{\frac{P\left(Y=1|G=g,t=60\right)}{P\left(Y=0|G=g,t=60\right)}}=\frac{e^{\beta_{0,after}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61}}{e^{\beta_{0,before}^{\left(g\right)}+\beta_{1,before}^{\left(g\right)}\cdot60}}=\exp\left[\beta_{0,after}^{\left(g\right)}-\beta_{0,before}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61-\beta_{1,before}^{\left(g\right)}\cdot60\right]
 \]
 
 \end_inset
@@ -611,7 +609,7 @@ Finally, the log-odds-ratio of group
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\gamma_{g}=\ln\left(\frac{\nicefrac{\pi_{g,61}}{1-\pi_{g,61}}}{\nicefrac{\pi_{g,60}}{1-\pi_{g,60}}}\right)=\beta_{0,after}^{\left(g\right)}-\beta_{0,before}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61-\beta_{1,before}^{\left(g\right)}\cdot60
+\gamma_{g}=\beta_{0,after}^{\left(g\right)}-\beta_{0,before}^{\left(g\right)}+\beta_{1,after}^{\left(g\right)}\cdot61-\beta_{1,before}^{\left(g\right)}\cdot60
 \]
 
 \end_inset
@@ -661,7 +659,7 @@ and
 
  is a linear function of normal RVs.
  So, given the model we can conduct this hypothesis testing at once.
- The problem is specifying 
+ The problem is specifing 
 \begin_inset Formula $-\nabla^{2}\ell^{-1}$
 \end_inset
 
@@ -690,7 +688,7 @@ First of all,
 \begin_layout Standard
 \begin_inset Formula 
 \[
-Y_{gij,t}\cancel{\bot}Y_{gij,t-1}
+Y_{ij,t}\cancel{\bot}Y_{ij,t-1}
 \]
 
 \end_inset
@@ -704,11 +702,11 @@ The inner-subject dependency can be modeled as an ARMA process with
 \end_inset
 
 , e.g.
- the probability of choosing the correct button at time 
+ the probabilty of choosing the correct button at time 
 \begin_inset Formula $t$
 \end_inset
 
- changes if we know what happened at time 
+ changes if we know what happend at time 
 \begin_inset Formula $t-1$
 \end_inset
 
@@ -723,7 +721,7 @@ Furthermore, subjects which played in groups are cross-correlated among
 \begin_layout Standard
 \begin_inset Formula 
 \[
-Corr\left(Y_{gijt},Y_{gikt}\right)\neq0
+Corr\left(Y_{ijt},Y_{ikt}\right)\neq0
 \]
 
 \end_inset
@@ -733,11 +731,11 @@ Corr\left(Y_{gijt},Y_{gikt}\right)\neq0
 
 \begin_layout Standard
 Even if we assume that there is no partial correlation between 
-\begin_inset Formula $Y_{gij,t},Y_{gik,t-1}$
+\begin_inset Formula $Y_{ij,t},Y_{ik,t-1}$
 \end_inset
 
 , it follows that all observation in 
-\begin_inset Formula $Y_{gi\cdot\cdot}$
+\begin_inset Formula $Y_{i}$
 \end_inset
 
  are correlated:
@@ -746,9 +744,9 @@ Even if we assume that there is no partial correlation between
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-\left(1\right) & Corr\left(Y_{gijt},Y_{gikt}\right)\neq0\\
-\left(2\right) & Corr\left(Y_{gijt},Y_{gij,t-s}\right)\neq0\\
-\Rightarrow & Corr\left(Y_{gij,t-s},Y_{gikt}\right)\neq0
+\left(1\right) & Corr\left(Y_{ijt},Y_{ikt}\right)\neq0\\
+\left(2\right) & Corr\left(Y_{ijt},Y_{ij,t-s}\right)\neq0\\
+\Rightarrow & Corr\left(Y_{ij,t-s},Y_{ikt}\right)\neq0
 \end{align*}
 
 \end_inset
@@ -757,74 +755,9 @@ Even if we assume that there is no partial correlation between
 \end_layout
 
 \begin_layout Standard
-\begin_inset Newpage newpage
-\end_inset
-
-
-\end_layout
-
-\begin_layout Section
-The GEE
-\end_layout
-
-\begin_layout Subsection
-Summation Over Group Results
-\end_layout
-
-\begin_layout Standard
-Denote 
 \begin_inset Formula 
 \[
-Y_{git}=\sum_{j=1}^{n_{git}}Y_{gijt}
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Where 
-\begin_inset Formula $n_{git}$
-\end_inset
-
- is the number of players in group 
-\begin_inset Formula $g,i$
-\end_inset
-
- at time 
-\begin_inset Formula $t$
-\end_inset
-
-.
-\end_layout
-
-\begin_layout Standard
-We know that marginally, 
-\begin_inset Formula $Y_{gijt}\sim Bin\left(1,\pi_{gt}\right)$
-\end_inset
-
-.
- However, since 
-\begin_inset Formula $Y_{gijt}\cancel{\bot}Y_{gikt}$
-\end_inset
-
-, 
-\begin_inset Formula $Y_{git}$
-\end_inset
-
- doesn't have the 
-\begin_inset Formula $Bin\left(n_{git},\pi_{gt}\right)$
-\end_inset
-
- distribution.
- The moments are given as:
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-E\left[\frac{Y_{git}}{n_{git}}\right]=E\left[\frac{\sum_{j=1}^{n_{git}}Y_{gijt}}{n_{git}}\right]=\frac{\sum_{j=1}^{n_{git}}E\left[Y_{gijt}\right]}{n_{git}}=\pi_{gt}
+g\left(E\left[Y_{ijt}|b_{it},Y_{ij,t-1}\right]\right)=\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi Y_{ij,t-1}
 \]
 
 \end_inset
@@ -835,12 +768,9 @@ E\left[\frac{Y_{git}}{n_{git}}\right]=E\left[\frac{\sum_{j=1}^{n_{git}}Y_{gijt}}
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-Var\left(\frac{Y_{git}}{n_{git}}\right) & =n_{git}^{-2}Var\left(\sum_{j=1}^{n_{git}}Y_{gijt}\right)\\
- & =n_{git}^{-2}\left(\sum_{j=1}^{n_{git}}Var\left(Y_{gijt}\right)+2\cdot\sum_{1\leq j<k\leq n_{git}}Cov\left(Y_{gijt},Y_{gikt}\right)\right)\\
- & =n_{git}^{-2}\left(n_{git}\pi_{gt}\left(1-\pi_{gt}\right)+\phi^{'}\right)\\
- & =\frac{\pi_{gt}\left(1-\pi_{gt}\right)}{n_{git}}+\frac{\phi_{gt}^{'}}{n_{git}^{2}}\\
- & =V_{n_{git}}\left(\pi_{gt}\right)+\frac{\phi_{gt}^{'}}{n_{git}^{2}}\\
- & \approx V_{n_{git}}\left(\pi_{gt}\right)\cdot\phi_{g}
+E\left[Y_{ijt}\right]=E\left[E\left[Y_{ijt}|b_{it},Y_{ij,t-1}\right]\right] & =E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi Y_{ij,t-1}\right)\right]\\
+ & =E\left[E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi Y_{ij,t-1}\right)|Y_{ij,t-1}\right]\right]\\
+ & =E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}+\phi\right)\right]\cdot P\left(Y_{ij,t-1}=1\right)+E\left[g^{-1}\left(\beta_{0}^{\left(g\right)}+\beta_{1}^{\left(g\right)}\cdot h\left(t\right)+b_{it}\right)\right]\cdot P\left(Y_{ij,t-1}=0\right)
 \end{align*}
 
 \end_inset
@@ -849,38 +779,49 @@ Var\left(\frac{Y_{git}}{n_{git}}\right) & =n_{git}^{-2}Var\left(\sum_{j=1}^{n_{g
 \end_layout
 
 \begin_layout Standard
-Where we use a multiplactive dispersion paramater rather than an additive
- one for simplicity.
- If we model 
-\begin_inset Formula $Y_{git}^{'}=\frac{Y_{git}}{n_{git}}$
+\begin_inset Formula 
+\[
+E\left[\right]
+\]
+
 \end_inset
 
- rather than 
-\begin_inset Formula $Y_{gijt}$
-\end_inset
 
-, then we are able to release the issue of cross correlation and deal only
- with the auto-correlation
-\end_layout
-
-\begin_layout Subsection
-Modelling of the GEE
 \end_layout
 
 \begin_layout Standard
-Since we have repeated measures and a hard to define correlation structure,the
- GEE method seems as a good methodology; We only need to define the first
- two moments and have a good initial guess of the correlation structure
- (the GEE is robust to the misspecification of the correlation structure).
- We will model the following:
+\begin_inset Formula 
+\[
+Cov\left(Y_{ijt},Y_{kls}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So, assuming 
+\begin_inset Formula $Y_{ij,t}$
+\end_inset
+
+ follows an 
+\begin_inset Formula $AR\left(1\right)$
+\end_inset
+
+ process, our correlation structure of 
+\begin_inset Formula $Y$
+\end_inset
+
+ is as follows:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \begin{align*}
-E\left[Y_{git}^{'}\right] & =\pi_{gt}\\
-Var\left(Y_{git}^{'}\right) & =\phi_{g}\cdot V_{n_{git}}\left(\pi_{gt}\right)=\phi_{g}\cdot\frac{\pi_{gt}\left(1-\pi_{gt}\right)}{n_{git}}\\
-Corr\left(Y_{git}^{'},Y_{gis}^{'}\right) & =\alpha_{g}^{\left|t-s\right|}\quad\left\{ AR\left(1\right)\right\} 
+Corr\left(Y_{ijt},Y_{kls}\right) & =0\:\forall\:i\neq k\\
+Corr\left(Y_{ijt},Y_{ikt}\right) & =\rho_{g}\\
+Corr\left(Y_{ijt},Y_{ij,t-s}\right) & =\phi_{g}^{\left|s\right|}
 \end{align*}
 
 \end_inset
@@ -889,99 +830,21 @@ Corr\left(Y_{git}^{'},Y_{gis}^{'}\right) & =\alpha_{g}^{\left|t-s\right|}\quad\l
 \end_layout
 
 \begin_layout Standard
-The 
-\begin_inset Formula $AR(1)$
-\end_inset
-
- model seems fit for our problem; Even if we have an 
-\begin_inset Formula $AR\left(p\right)$
-\end_inset
-
- process, the GEE is robust to misspecification of 
-\begin_inset Formula $p$
-\end_inset
-
-; The variance seems fit up to the multiplactive estimation of the additive
- factor; However this seems as an appropiate approximation.
-\end_layout
-
-\begin_layout Subsection
-Results of the GEE
-\end_layout
-
-\begin_layout Subsubsection
-Individuals Groups
-\end_layout
-
-\begin_layout Subsubsection
-Non-Fine Groups
-\end_layout
-
-\begin_layout Subsubsection
-Fine Groups
-\end_layout
-
-\begin_layout Subsection
-Comparisons of Coefficients
-\end_layout
-
-\begin_layout Subsubsection
-\begin_inset Formula $\beta_{1,before}^{\left(g\right)}-\beta_{1,before}^{\left(h\right)}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-\begin_inset Formula $\beta_{1,after}^{\left(g\right)}-\beta_{1,after}^{\left(h\right)}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-\begin_inset Formula $\left(\beta_{1,after}^{\left(g\right)}-\beta_{1,before}^{\left(g\right)}\right)-\left(\beta_{1,after}^{\left(h\right)}-\beta_{1,before}^{\left(h\right)}\right)$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-\begin_inset Formula $\gamma_{g}-\gamma_{h}$
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsection
-Comparisons of Sum of Succeses
-\end_layout
-
-\begin_layout Subsubsection
-ANOVA Analysis
-\end_layout
-
-\begin_layout Subsubsection
-Using the GEE Model
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula $\beta_{gj}\coloneqq\beta_{j,after}^{\left(g\right)}$
-\end_inset
-
-
+In matrix form:
 \end_layout
 
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\left(\begin{array}{c}
-\beta_{10}\\
-\beta_{11}\\
-\beta_{20}\\
-\beta_{21}\\
-\beta_{30}\\
-\beta_{31}
+Corr\left(Y_{i}\right)=\left(\begin{array}{cccccccc}
+1 & \phi_{g} & \phi_{g}^{2} & \phi_{g}^{3} & \rho_{g} & 0 & 0 & 0\\
+\phi_{g} & 1 & \phi_{g} & \phi_{g}^{2} & 0 & \rho_{g} & 0 & 0\\
+\phi_{g}^{2} & \phi_{g} & 1 & \phi_{g} & 0 & 0 & \rho_{g} & 0\\
+\phi_{g}^{3} & \phi_{g}^{2} & \phi_{g} & 1 & 0 & 0 & 0 & \rho_{g}\\
+\rho_{g} & 0 & 0 & 0 & 1 & \phi_{g} & \phi_{g}^{2} & \phi_{g}^{3}\\
+0 & \rho_{g} & 0 & 0 & \phi_{g} & 1 & \phi_{g} & \phi_{g}^{2}\\
+0 & 0 & \rho_{g} & 0 & \phi_{g}^{2} & \phi_{g} & 1 & \phi_{g}\\
+0 & 0 & 0 & \rho_{g} & \phi_{g}^{3} & \phi_{g}^{2} & \phi_{g} & 1
 \end{array}\right)
 \]
 
@@ -993,126 +856,7 @@ Using the GEE Model
 \begin_layout Standard
 \begin_inset Formula 
 \[
-\left(\begin{array}{cccccc}
-1 & \ln61 & 0 & 0 & 0 & 0\\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-1 & \ln100 & 0 & 0 & 0 & 0\\
-0 & 0 & 1 & \ln61 & 0 & 0\\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-0 & 0 & 1 & \ln100 & 0 & 0\\
-0 & 0 & 0 & 0 & 1 & \ln61\\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-0 & 0 & 0 & 0 & 1 & \ln100
-\end{array}\right)\left(\begin{array}{c}
-\beta_{10}\\
-\beta_{11}\\
-\beta_{20}\\
-\beta_{21}\\
-\beta_{30}\\
-\beta_{31}
-\end{array}\right)=\left(\begin{array}{c}
-\beta_{10}+\beta_{11}\ln61\\
-\vdots\\
-\beta_{10}+\beta_{11}\ln100\\
-\beta_{20}+\beta_{21}\ln61\\
-\vdots\\
-\beta_{20}+\beta_{21}\ln100\\
-\beta_{30}+\beta_{31}\ln61\\
-\vdots\\
-\beta_{30}+\beta_{31}\ln100
-\end{array}\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\left(\begin{array}{ccccccccc}
-1 & \cdots & 1 & 0 & \cdots & \cdots & \cdots & \cdots & 0\\
-0 & \cdots & 0 & 1 & \cdots & 1 & 0 & \cdots & 0\\
-0 & \cdots & \cdots & \cdots & \cdots & 0 & 1 & \cdots & 1
-\end{array}\right)\left(\begin{array}{c}
-\beta_{10}+\beta_{11}\ln61\\
-\vdots\\
-\beta_{10}+\beta_{11}\ln100\\
-\beta_{20}+\beta_{21}\ln61\\
-\vdots\\
-\beta_{20}+\beta_{21}\ln100\\
-\beta_{30}+\beta_{31}\ln61\\
-\vdots\\
-\beta_{30}+\beta_{31}\ln100
-\end{array}\right)=\left(\begin{array}{c}
-\sum_{t}\beta_{10}+\beta_{11}\ln t\\
-\sum_{t}\beta_{20}+\beta_{21}\ln t\\
-\sum_{t}\beta_{30}+\beta_{31}\ln t
-\end{array}\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\left(\begin{array}{ccc}
-1 & -1 & 0\\
-1 & 0 & -1\\
-0 & 1 & -1
-\end{array}\right)\left(\begin{array}{c}
-\sum_{t}\beta_{10}+\beta_{11}\ln t\\
-\sum_{t}\beta_{20}+\beta_{21}\ln t\\
-\sum_{t}\beta_{30}+\beta_{31}\ln t
-\end{array}\right)=\left(\begin{array}{c}
-\left(\sum_{t}\beta_{10}+\beta_{11}\ln t\right)-\left(\sum_{t}\beta_{20}+\beta_{21}\ln t\right)\\
-\left(\sum_{t}\beta_{10}+\beta_{11}\ln t\right)-\left(\sum_{t}\beta_{30}+\beta_{31}\ln t\right)\\
-\left(\sum_{t}\beta_{20}+\beta_{21}\ln t\right)-\left(\sum_{t}\beta_{30}+\beta_{31}\ln t\right)
-\end{array}\right)
-\]
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Formula 
-\[
-\left(\begin{array}{c}
-\left(\sum_{t}\beta_{10}+\beta_{11}\ln t\right)-\left(\sum_{t}\beta_{20}+\beta_{21}\ln t\right)\\
-\left(\sum_{t}\beta_{10}+\beta_{11}\ln t\right)-\left(\sum_{t}\beta_{30}+\beta_{31}\ln t\right)\\
-\left(\sum_{t}\beta_{20}+\beta_{21}\ln t\right)-\left(\sum_{t}\beta_{30}+\beta_{31}\ln t\right)
-\end{array}\right)=\left(\begin{array}{ccc}
-1 & -1 & 0\\
-1 & 0 & -1\\
-0 & 1 & -1
-\end{array}\right)\left(\begin{array}{ccccccccc}
-1 & \cdots & 1 & 0 & \cdots & \cdots & \cdots & \cdots & 0\\
-0 & \cdots & 0 & 1 & \cdots & 1 & 0 & \cdots & 0\\
-0 & \cdots & \cdots & \cdots & \cdots & 0 & 1 & \cdots & 1
-\end{array}\right)\left(\begin{array}{cccccc}
-1 & \ln61 & 0 & 0 & 0 & 0\\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-1 & \ln100 & 0 & 0 & 0 & 0\\
-0 & 0 & 1 & \ln61 & 0 & 0\\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-0 & 0 & 1 & \ln100 & 0 & 0\\
-0 & 0 & 0 & 0 & 1 & \ln61\\
-\vdots & \vdots & \vdots & \vdots & \vdots & \vdots\\
-0 & 0 & 0 & 0 & 1 & \ln100
-\end{array}\right)\left(\begin{array}{c}
-\beta_{10}\\
-\beta_{11}\\
-\beta_{20}\\
-\beta_{21}\\
-\beta_{30}\\
-\beta_{31}
-\end{array}\right)
+logit\left(Y_{ijt}\right)=\beta_{0,t}^{\left(g\right)}+\beta_{1,t}^{\left(g\right)}\cdot h\left(t\right)+b_{it}^{\left(g\right)}+k\left(Y_{ij,t-1}\right)
 \]
 
 \end_inset

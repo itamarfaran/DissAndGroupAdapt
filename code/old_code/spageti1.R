@@ -1,10 +1,7 @@
-source("presentation/firstAnal.R")
+source("code/old_code/firstAnal.R")
 
 byTime <- testData[,.(round, group_num, cond, iscorrGr)] %>% unique() %>% spread(key = round, value = iscorrGr)
-cummeans1 <- byTime[,3:62] %>% apply(1, cummean) %>% t
-cummeans2 <- byTime[,63:102] %>% apply(1, cummean) %>% t
-cummeans <- cbind(cummeans1, cummeans2)
-
+cummeans <- byTime[,-(1:2)] %>% apply(1, cummean) %>% t
 averagecummeans <- cbind(unique(byTime[,cond]),
                          sapply(1:3, function(i) cummeans[byTime[,cond] == i,] %>%
                                   colMeans(na.rm = T)) %>% t) %>% as.data.frame()

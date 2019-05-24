@@ -1,4 +1,4 @@
-source("code/00_baseFunctions.R")
+source("code/01_auxilary_functions.R")
 
 testData <- fread("data/decision_making_experiment.csv")
 str(testData)

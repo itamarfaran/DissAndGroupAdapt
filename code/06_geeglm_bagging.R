@@ -41,7 +41,7 @@ diffs_boot <- compute_all_contrasts(log_odds_boot$log_odds, log_odds_boot$var_lo
 compute_zvals(diffs_boot$diffs, diffs_boot$var_diffs)
 tt
 
-link <- paste0("Data/binomial_bagg_B", B, "_", Sys.time(), ".RData")
+link <- paste0("Data/environments/binomial_bagg_B", B, "_", Sys.time(), ".RData")
 link <- gsub(":", "-", link)
 link <- gsub(" ", "_", link)
 save.image(link)
