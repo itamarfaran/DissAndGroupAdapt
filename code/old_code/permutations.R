@@ -1,4 +1,4 @@
-source("code/analysis_tmp.R")
+source("code/02_get_data.R")
 
 ##### Build functions #####
 

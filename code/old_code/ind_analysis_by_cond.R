@@ -1,5 +1,4 @@
-source("code/00_baseFunctions.R")
-source("code/analysis_tmp.R")
+source("code/02_get_data.R")
 
 testData2
 individual_mod <- geeglm(iscorrectInd ~ log(round)*afterShock, family = binomial(link = "logit"),
@@ -65,6 +64,7 @@ for(k in 1:length(unique_groupnum)) for(i in 1:100){
   corr_matrix[indexs[3], indexs[2]] <- corrmeans[k]
 }
 
+ipak(corrplot)
 corrplot::corrplot(corr_matrix[50:150, 50:150])
 dt
 

@@ -1,5 +1,4 @@
-source("code/00_baseFunctions.R")
-source("code/analysis_tmp.R")
+source("code/02_get_data.R")
 # library(glmmTMB)
 # library(vars)
 
@@ -87,4 +86,3 @@ data2 <- split(testData2[group_num == 2, residuals],
                  testData2[group_num == 2, subnum]) %>%
   unlist() %>% matrix(nc = 3)
 colnames(data2) <- paste0("subject", 1:3)
-

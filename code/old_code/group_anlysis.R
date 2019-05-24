@@ -1,5 +1,4 @@
-source("code/00_baseFunctions.R")
-source("code/analysis_tmp.R")
+source("code/02_get_data.R")
 
 testData3 <- unique(testData2[,.(round, loground = log(round), group_num, cond, iscorrectGr)])
 X1 <- testData3[,.( group_num,
@@ -125,6 +124,7 @@ results2$gamma
 results2$diff
 results2$Pval
 
+ipak("lme4")
 autocor <- copy(testData3[,.(corr = auto_cor(res.gee.ur, 1)), by = .(group_num, cond, round > 60)])
 autocor[, fisher_z := 0.5*log((1 + corr) / (1 - corr))]
 autocor
