@@ -1,6 +1,34 @@
-source("code/analysis_tmp.R")
+ipak <- function(pkg){
+  new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+  if (length(new.pkg)) 
+    install.packages(new.pkg, dependencies = TRUE)
+  sapply(pkg, require, character.only = TRUE)
+}
 
-##### Functions #####
+ipak(c("parallel", "pbmcapply", "readr", "tidyverse", "data.table", "dtplyr", "pracma",
+       "geepack", "plotly", "Matrix", "mvtnorm"))
+# ipak(c("corrplot", "msm", "markovchain", "lme4", "glmmTMB"))
+
+createID <- function(x, factor = TRUE){
+  x <- factor(x)
+  x2 <- numeric(length(x))
+  xlev <- levels(x)
+  for(k in xlev){
+    x2[x == k] <- which(xlev == k)
+  }
+  if(factor) return(factor(x2))
+  return(x2)
+}
+makeAllNumeric <- function(df){
+  for(i in 1:ncol(df)) df[,i] <- as.numeric(df[,i])
+  return(df)
+}
+auto_cor <- Vectorize(function(x, lag) cor(x[1:(length(x) - lag)], x[(1 + lag):length(x)]), "lag")
+nlargest <- function(x, k){
+  n <- length(x)
+  if(k > n) return(min(x))
+  return(sort(x, decreasing = TRUE)[k])
+}
 prepare_data <- function(dt){
   dt_new <- copy(dt)
   
@@ -23,6 +51,42 @@ prepare_data <- function(dt){
   )]
   return(dt_new)
 }
+build_multi_ci <- function(dt, t, sig.level = 0.05, correct = TRUE){
+  means0 <- dt[maxt == t, .(mean = mean(success)), keyby = cond]
+  means <- means0$mean
+  names(means) <- means0$cond
+  
+  vars0 <- dt[maxt == t, .(var = var(success)/.N), keyby = cond]
+  vars <- diag(vars0$var)
+  rownames(vars) <- colnames(vars) <- vars0$cond
+  
+  C <- matrix(c(
+    1, -1, 0,
+    1, 0, -1,
+    0, 1, -1),
+    ncol = 3, byrow = T)
+  
+  
+  diff <- as.vector(C %*% means)
+  diff_vars <- C %*% vars %*% t(C)
+  quantile_t <- qmvt(1 - sig.level/2,
+                     df = 90 - 6,
+                     corr = cov2cor(diff_vars))$quantile
+  
+  names(diff) <- c(
+    paste0(names(means)[1], "_", names(means)[2]),
+    paste0(names(means)[1], "_", names(means)[3]),
+    paste0(names(means)[2], "_", names(means)[3])
+  )
+  
+  
+  cis <- (diff %o% rep(1, 3)) + (( quantile_t*sqrt(diag(diff_vars)) ) %o% c(-1, 0, 1))
+  colnames(cis) <- c(paste0("lower", 100*(1 - sig.level), "%"),
+                     "estimate",
+                     paste0("upper", 100*(1 - sig.level), "%"))
+  return(cis)
+}
+
 boot_geeglm <- function(dt, do.boot = TRUE, even.groups = TRUE, return.model = FALSE, seed){
   cdt <- copy(dt)
   
@@ -73,6 +137,64 @@ boot_geeglm <- function(dt, do.boot = TRUE, even.groups = TRUE, return.model = F
   if(return.model) return(list(ind = gee_mod_ind, nonfine = gee_mod_nonfine, fine = gee_mod_fine))
   return(get_coefs_vcov(gee_mod_ind, gee_mod_nonfine, gee_mod_fine))
 }
+get_coefs_vcov <- function(..., lst){
+  models <- if(missing(lst)) list(...) else lst
+  coeffs <- simplify(purrr::transpose(models)$coefficients)
+  vcov <- as.matrix(bdiag(lapply(models, function(m) summary(m)$cov.scaled)))
+  
+  return(list(coeffs = coeffs, vcov = vcov))
+}
+get_preds_and_sd <- function(mod){
+  X <- rbind(
+    cbind(rep(1, 60), log(1:60), rep(0, 60), rep(0, 60)),
+    cbind(rep(0, 40), rep(0, 40), rep(1, 40), log(61:100))
+  )
+  
+  return(list(
+    X %*% mod$coefficients,
+    sqrt(diag(X %*% summary(mod)$cov.scaled %*% t(X) ))
+  ))
+}
+expected_sum_of_success_gee <- function(t, gee_mods){
+  leng_sum <- t - 60 
+  
+  C1 <- matrix(c(1, -1, 0, 1, 0, -1, 0, 1, -1), ncol = 3, byrow = TRUE)
+  
+  C2 <- rbind(c(rep(1, leng_sum), rep(0, leng_sum), rep(0, leng_sum)),
+              c(rep(0, leng_sum), rep(1, leng_sum), rep(0, leng_sum)),
+              c(rep(0, leng_sum), rep(0, leng_sum), rep(1, leng_sum)))
+  
+  C3_t1 <- cbind(rep(1, leng_sum), log(61:t))
+  C3_t2 <- matrix(0, nr = leng_sum, nc = 2)
+  C3 <- rbind(cbind(C3_t1, C3_t2, C3_t2),
+              cbind(C3_t2, C3_t1, C3_t2),
+              cbind(C3_t2, C3_t2, C3_t1))
+  
+  C <- C1 %*% C2 %*% C3
+  
+  beta_ind <- c(3, 4, 7, 8, 11, 12)
+  beta_coef <- gee_mods$coefs_vcov$coeffs[beta_ind]
+  beta_var <- gee_mods$coefs_vcov$vcov[beta_ind, beta_ind]
+  
+  contrast_coef <- C %*% beta_coef
+  contrast_var <- C %*% beta_var %*% t(C)
+  
+  names(contrast_coef) <- rownames(contrast_var) <- colnames(contrast_var) <-
+    c("ind_nonfine", "ind_fine", "nonfine_fine")
+  
+  chi <- as.vector(t(contrast_coef[1:2]) %*% solve(contrast_var[1:2, 1:2]) %*% contrast_coef[1:2])
+  
+  sum_of_success_diff_mod <- list(
+    coef = contrast_coef,
+    vcov = contrast_var,
+    chi = chi,
+    p_chi = pchisq(chi, 2, lower.tail = F),
+    pairwise = compute_zvals(contrast_coef, contrast_var)[-(4:6),]
+  )
+  
+  return(sum_of_success_diff_mod)
+}
+
 compute_log_odds <- function(coef, vcov, contrast){
   l <- length(contrast)
   C1 <- rbind(c(contrast, rep(0, l), rep(0, l)),
@@ -130,13 +252,6 @@ compute_all <- function(coefs_vcov_lst, contrast, sig.level = 0.05, adjust.ci = 
               z = zvals))
 }
 
-get_coefs_vcov <- function(..., lst){
-  models <- if(missing(lst)) list(...) else lst
-  coeffs <- simplify(purrr::transpose(models)$coefficients)
-  vcov <- as.matrix(bdiag(lapply(models, function(m) summary(m)$cov.scaled)))
-  
-  return(list(coeffs = coeffs, vcov = vcov))
-}
 plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
   scale <- scale[1]
   if(!scale %in% c("props", "odds", "logodds")) stop("'scale' must be one of 'props', 'odds', 'logodds'")
@@ -164,12 +279,12 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
   cat(paste0("RMSE: ", round(error_metrics$rmse, 5), " || MAD: ", round(error_metrics$mad_, 5)))
   
   dt1 <- dt[,.(emp_mean = scale_fn(iscorrectGr),
-              predicted_mean = scale_fn(predictions)),
-           by = .(round, cond)]
+               predicted_mean = scale_fn(predictions)),
+            by = .(round, cond)]
   dt1[, `:=` (error = emp_mean - predicted_mean)]
   dt1[, `:=` (lower = predicted_mean + error*(error < 0),
               upper = predicted_mean + error*(error > 0)
-              )]
+  )]
   vs <-
     ggplot(dt1, aes(x = round, col = cond)) +
     geom_line(aes(y = predicted_mean), size = 1) +
@@ -193,122 +308,3 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
               error_stats = error_metrics,
               errors = errors_dt))
 }
-
-##### Real Results #####
-
-gee_mods <- boot_geeglm(testData2, do.boot = FALSE, return.model = TRUE)
-lapply(gee_mods, summary)
-
-coefs_vcov <- get_coefs_vcov(lst = gee_mods)
-
-### Difference of beta_1_before
-compute_all(coefs_vcov, c(0, 1, 0, 0))
-compute_all(coefs_vcov, c(0, 0, 0, 1))
-compute_all(coefs_vcov, c(0, -1, 0, 1))
-compute_all(coefs_vcov, c(-1, -log(60), 1, log(60)))
-
-##### Plot Results #####
-predictions <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)]
-predictions[cond == "individual", predictions := predict(gee_mods$ind, type = "response")]
-predictions[cond == "nonfine", predictions := predict(gee_mods$nonfine, type = "response")]
-predictions[cond == "fine", predictions := predict(gee_mods$fine, type = "response")]
-
-p_scale_plt <- plot_diff_bingee(predictions, "props")
-odds_scale_plt <- plot_diff_bingee(predictions, "odds")
-log_odds_scale_plt <- plot_diff_bingee(predictions, "logodds")
-
-get_preds_and_sd <- function(mod){
-  X <- rbind(
-    cbind(rep(1, 60), log(1:60), rep(0, 60), rep(0, 60)),
-    cbind(rep(0, 40), rep(0, 40), rep(1, 40), log(61:100))
-  )
-  
-  return(list(
-    X %*% mod$coefficients,
-    sqrt(diag(X %*% summary(mod)$cov.scaled %*% t(X) ))
-  ))
-}
-predictions2 <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)
-                        ][
-                          ,.(average = mean(iscorrectGr)), by = .(round, cond)]
-
-predictions2[cond == "individual", c("pred", "sd") := get_preds_and_sd(gee_mods$ind)]
-predictions2[cond == "nonfine", c("pred", "sd") := get_preds_and_sd(gee_mods$nonfine)]
-predictions2[cond == "fine", c("pred", "sd") := get_preds_and_sd(gee_mods$fine)]
-predictions2[, `:=` (lower = pred - qnorm(0.975)*sd, upper = pred + qnorm(0.975)*sd)]
-predictions2[, `:=` (pred = plogis(pred), sd = NULL, lower = plogis(lower), upper = plogis(upper))]
-
-ggplot(predictions2, aes(x = round)) + 
-  geom_ribbon(aes(ymin = lower, ymax = upper),
-              alpha = 0.33, col = NA, fill = "#00CED1") +
-  geom_line(aes(y = average), col = "#FF6347", size = 1) + 
-  facet_grid(cond ~ .) + 
-  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) + 
-  labs(title = "Empiric Mean and 95% CI of Predicted Value",
-       x = "Round", y = "Probability of Success")
-
-predictions2_melt <- melt(predictions2, id.vars = c("round", "cond"))
-predictions2_melt[variable %in% c("upper", "lower"), type := "CI"]
-predictions2_melt[!variable %in% c("upper", "lower"), type := "Estimate"]
-predictions2_melt[variable == "average", model := "Average"]
-predictions2_melt[!variable == "average", model := "GEE"]
-
-ggplot(predictions2_melt, aes(x = round, y = value, col = model, linetype = type, by = variable)) + 
-  geom_line(size = 1) + facet_grid(cond ~ .) + 
-  geom_hline(yintercept = 0) + geom_vline(xintercept = 0) + 
-  scale_linetype_manual(values = c("dashed", "solid")) + 
-  labs(title = "Empiric Mean vs. Predicted Value",
-       x = "Round", y = "Probability of Success",
-       linetype = "CI/Estimate", col = "Model/Average")
-
-##### Bagging #####
-
-ncores <- ifelse(.Platform$OS.type == "windows", 1, parallel::detectCores() - 2)
-B <- 50*ncores
-
-tt <- Sys.time()
-res_boot <- pbmclapply(1:B, function(b) boot_geeglm(testData2), mc.cores = ncores)
-tt <- Sys.time() - tt
-
-coeffs_boot <- do.call(rbind, purrr::transpose(res_boot)$coeffs)
-vcov_boot <- array(unlist(purrr::transpose(res_boot)$vcov),
-                   dim = c(ncol(coeffs_boot), ncol(coeffs_boot), B))
-
-drop_obs <- data.table(which(abs(coeffs_boot) > 10^2.5, arr.ind = T))
-drop_obs[between(col, 1, 4), dropped := "ind"]
-drop_obs[between(col, 5, 8), dropped := "nonfine"]
-drop_obs[between(col, 9, 12), dropped := "fine"]
-drop_obs_vec <- drop_obs[,sort(unique(row))]
-
-if(length(drop_obs_vec) > 0){
-  coeffs_boot_drp <- coeffs_boot[-drop_obs_vec,]
-  vcov_boot_drp <- vcov_boot[,,-drop_obs_vec]
-} else {
-  coeffs_boot_drp <- coeffs_boot
-  vcov_boot_drp <- vcov_boot
-}
-Btag <- B - length(drop_obs_vec)
-message(paste("Bootstraps dropped: ", round(1 - Btag/B, 4)*100, "%" ))
-unique(drop_obs[,.(row, dropped)])[,.N, by = dropped]
-
-coeffs_boot_mean <- colMeans(coeffs_boot_drp)
-vcov_boot_emp <- cov(coeffs_boot_drp)
-vcov_boot_mean <- vcov_boot_drp[,,1]/Btag
-for(b in 2:Btag) vcov_boot_mean <- vcov_boot_mean + vcov_boot_drp[,,b]/Btag
-
-log_odds_boot <- compute_log_odds(coeffs_boot_mean,
-                                  vcov_boot_emp,
-                                  # vcov_boot_mean,
-                                  c(-1, -log(60), 1, log(60)))
-diffs_boot <- compute_all_contrasts(log_odds_boot$log_odds, log_odds_boot$var_log_odds)
-compute_zvals(diffs$diffs, diffs$var_diffs)
-compute_zvals(diffs_boot$diffs, diffs_boot$var_diffs)
-tt
-
-link <- paste0("Data/binomial_bagg_B", B, "_", Sys.time(), ".RData")
-link <- gsub(":", "-", link)
-link <- gsub(" ", "_", link)
-save.image(link)
-
-
-#####
