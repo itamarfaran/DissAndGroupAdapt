@@ -246,7 +246,8 @@ compute_all <- function(coefs_vcov_lst, contrast, sig.level = 0.05, adjust.ci = 
   chisq_val <- t(diffs_contrast$diffs[1:2]) %*% solve(diffs_contrast$var_diffs[1:2, 1:2]) %*% diffs_contrast$diffs[1:2]
   
   pval_chisq <- pchisq(chisq_val, 2, lower.tail = FALSE)
-  zvals <- compute_zvals(diffs_contrast$diffs, diffs_contrast$var_diffs)
+  zvals <- compute_zvals(diffs_contrast$diffs, diffs_contrast$var_diffs,
+                         sig.level = sig.level, adjust.ci = adjust.ci, p.adjust.method = p.adjust.method)
   
   return(list(chisq = c("Chisq Value" = chisq_val, "DF" = 2, "P-Value" = pval_chisq),
               z = zvals))
@@ -260,9 +261,9 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
                      "odds" = function(x) mean(x)/(1 - mean(x)),
                      "logodds" = function(x) qlogis(mean(x)))
   scale_title <- switch(scale,
-                        "props" = "(Proportion Scale)",
-                        "odds" = "(Odds Scale)",
-                        "logodds" = "(Log Odds Scale)")
+                        "props" = "Proportion ",
+                        "odds" = "Odds",
+                        "logodds" = "Log Odds")
   
   errors_dt <- dt[,.(diff = scale_fn(iscorrectGr) - scale_fn(predictions)),
                   by = .(round, cond)][,diff]
@@ -291,8 +292,8 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
     geom_vline(xintercept = 0) +
     geom_linerange(aes(ymin = lower, ymax = upper), alpha = 0.4) + 
     geom_point(aes(y = emp_mean), shape = 18, alpha = 0.6) + 
-    labs(title = paste("Empiric Mean vs. Predicted Value", scale_title),
-         x = "Round", y = "Probability of Success", col = "Condition", type = "Type")
+    labs(title = paste0("Empiric Mean vs. Predicted Value (", scale_title, " scale)"),
+         x = "Round", y = paste0(scale_title, " of Success"), col = "Condition", type = "Type")
   
   vs <- vs + if(scale == "odds") scale_y_log10() else geom_hline(yintercept = 0)
   
@@ -300,7 +301,7 @@ plot_diff_bingee <- function(dt, scale = c("props", "odds", "logodds")){
     ggplot(aes(x = round, y = movavg(diff, 3, "e"), col = cond)) +
     geom_line(size = 1) + geom_hline(yintercept = 0) + geom_vline(xintercept = 0) +
     stat_summary(aes(group = 1), fun.y = mean, geom = "line", size = 1.2, linetype = 2) +
-    labs(title = paste("Difference of Empiric Mean vs. Predicted Value", scale_title),
+    labs(title = paste("Difference of Empiric Mean vs. Predicted Value (", scale_title, " scale)"),
          x = "Round", y = "Differnce", col = "Condition", type = "Type")
   
   return(list(vs = vs,

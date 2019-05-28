@@ -34,8 +34,14 @@ expected_sum_of_success_gee(90, gee_mods_grouped)
 expected_sum_of_success_gee(100, gee_mods_grouped)
 
 ##### Plot Results #####
-gee_mods <- gee_mods_ungrouped # gee_mods_grouped
-predictions <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)]
+do_grouped <- FALSE
+gee_mods <- if(do_grouped) gee_mods_grouped else gee_mods_ungrouped
+
+predictions <- if(do_grouped) {
+  testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)]
+} else {
+  unique(testData[,.(iscorrectGr = iscorrectGr), by = .(round, group_num, cond)])
+}
 predictions[cond == "individual", predictions := predict(gee_mods$ind, type = "response")]
 predictions[cond == "nonfine", predictions := predict(gee_mods$nonfine, type = "response")]
 predictions[cond == "fine", predictions := predict(gee_mods$fine, type = "response")]
@@ -43,10 +49,8 @@ predictions[cond == "fine", predictions := predict(gee_mods$fine, type = "respon
 mean_vs_predicted_plts <- lapply(c("props", "odds", "logodds"),
                                  function(scale) plot_diff_bingee(predictions, scale))
 
-predictions2 <- testData[,.(iscorrectGr = mean(iscorrectInd)), by = .(round, group_num, cond)
-                         ][
-                           ,.(average = mean(iscorrectGr)), by = .(round, cond)]
 
+predictions2 <- predictions[,.(average = mean(iscorrectGr)), by = .(round, cond)]
 predictions2[cond == "individual", c("pred", "sd") := get_preds_and_sd(gee_mods$ind)]
 predictions2[cond == "nonfine", c("pred", "sd") := get_preds_and_sd(gee_mods$nonfine)]
 predictions2[cond == "fine", c("pred", "sd") := get_preds_and_sd(gee_mods$fine)]
@@ -63,6 +67,20 @@ mean_vs_predci_plt <-
   labs(title = "Empiric Mean and 95% CI of Predicted Value",
        x = "Round", y = "Probability of Success")
 
+prob_before_after <- 
+  predictions2[between(round, 60, 61)] %>%
+  ggplot(aes(x = cond, y = pred, col = cond, by = round)) +
+  geom_point() + 
+  geom_errorbar(aes(ymin = lower, ymax = upper), width= 0.1) + 
+  geom_label(aes(label = paste0("Round ", round, "\n", round(pred, 2)) )) + 
+  labs(title = "Probability of Success Before and After Time 60",
+       x = "Group Type", y = "Probability of Success") + 
+  theme(legend.position = "none") + coord_cartesian(ylim = 0:1)
+
+  
 inference_plots <- list(mean_vs_predicted_plts = mean_vs_predicted_plts,
-                        mean_vs_predci_plt = mean_vs_predci_plt)
-rm(gee_mods, predictions, predictions2, mean_vs_predicted_plts, mean_vs_predci_plt)
+                        mean_vs_predci_plt = mean_vs_predci_plt,
+                        prob_before_after = prob_before_after)
+rm(gee_mods, predictions, predictions2, mean_vs_predicted_plts, mean_vs_predci_plt, prob_before_after)
+
+inference_plots$mean_vs_predicted_plts[[3]]$vs
